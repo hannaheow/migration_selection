@@ -29,7 +29,7 @@ output: html_document
 
 library(ggplot2)
 
-load("H:/amy/migration/3mods/22yearsmort_norace.RData") #the name of this dataset is sc for statecounty 
+load("data_processed/22yearsmort_norace.RData") #the name of this dataset is sc for statecounty 
 
 library(dplyr)
 dest_mort_change_norace = sc %>% group_by(fips) %>% 
@@ -69,7 +69,7 @@ dest_mort_change_norace$change_totrate_d = dest_mort_change_norace$totrate_d1 - 
 # -totpop_o
 
 
-load("H:/amy/migration/3mods/22yearsmort_norace.RData")
+load("data_processed/22yearsmort_norace.RData")
 
 initial_mort_norace = sc %>% rename(origid = fips, 
                                 year = Year, 
@@ -99,7 +99,7 @@ initial_mort_norace = sc %>% rename(origid = fips,
 
 #first some manipulations of irs columns and creation of total inflow and outflow columns 
 
-load("H:/amy/migration/3mods/12yearsmigfixed.RData")
+load("data_processed/12yearsmigfixed.RData")
 
 inout = inout %>% filter(destid != origid)
 #updated on 5/16 to remove migration counts when origin and destination are the same 
