@@ -275,6 +275,310 @@ I'm not sure this makes sense. Migration from unhealthy counties (10) to unhealt
 
 
 
+# Separate models for most urb and most rural 
+
+First create two separate datasets: rural and urban 
+
+```{r}
+urbbin = haven::read_sas("data_raw/nchs_urbanicity_wlabels.sas7bdat") %>% select(fipscode, statecode, countycode, rural)
+#load binary rural/urban code (coped from CHRR Pdrive folder 2) 
+
+#merge with the migterm data 
+
+migbin = merge(netmigterm, urbbin, by.x = "destid", by.y = "fipscode", all.x = TRUE)
+
+rural = migbin %>% filter(rural == 1) 
+urban = migbin %>% filter(rural == 0)
+```
+
+
+Now the modeling
+
+Similar approach as previous
+
+Rural first 
+
+```{r}
+# WITHOUT RACE - TOTAL COUNTY VALUES ONLY 
+
+library(splines)
+library(lme4)
+
+rural_migmodm = rural %>% arrange(year) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+rural_mn = data.frame(rural_migmodm)
+
+rural_mnn = rural_mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+rural_mnn$ft = as.factor(rural_mnn$t)
+
+# i rescaled these vars once to confirm that the results were unchanged by the "Warning: Some predictor variables are on very different scales: consider rescaling" message 
+# bic values were slightly different using standardized values, but their pattern/relative order did not change 
+# mnn$totrate_d0 = scale(mnn$totrate_d0)
+# mnn$migterm = scale(mnn$migterm)
+# mnn$totmig = scale(mnn$totmig) 
+
+
+
+
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline32 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 2), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline23 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 3), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline22 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 2), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + totmig, data = rural_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*totmig + totmig, data = rural_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+
+
+
+
+
+ruralbic = BIC(m1, m1_spline44, m1_spline33, m1_spline32, m1_spline23, m1_spline22, m1_totmig, m1_totmigi)
+
+
+rurmod = get(rownames(ruralbic[ruralbic$BIC == min(ruralbic$BIC),]))
+
+```
+
+Now the urban counties only 
+
+```{r}
+
+library(splines)
+library(lme4)
+
+urban_migmodm = urban %>% arrange(year) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+urban_mn = data.frame(urban_migmodm)
+
+urban_mnn = urban_mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+urban_mnn$ft = as.factor(urban_mnn$t)
+
+
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline32 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 2), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline23 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 3), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline22 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 2), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + totmig, data = urban_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*totmig + totmig, data = urban_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+
+
+
+
+
+urbanbic = BIC(m1, m1_spline44, m1_spline33, m1_spline32, m1_spline23, m1_spline22, m1_totmig, m1_totmigi)
+
+
+urbmod = get(rownames(urbanbic[urbanbic$BIC == min(urbanbic$BIC),]))
+
+
+
+```
+
+
+URBAN AND RURAL PLOTS 
+
+```{r}
+
+tempdf_urban = urban_mnn[c(rep(1,14)),]
+
+tempdf_rural = rural_mnn[c(rep(1,14)),] #dummy data - first 14 rows of original dataframe 
+
+tempdf_urban$totrate_d0 = c(seq(200, 1500, by = 100)) #replace with old mortality rates 
+#tempdf$ft = as.factor(c(1:14)) #unnecessary bc we only intend to compare two years and it doesn't matter which two 
+tempdf_rural$totrate_d0 = c(seq(200, 1500, by = 100))
+
+df_rural= rbind(tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural) #need to do it this way bc rep causes errors 
+df_urban= rbind(tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban)
+
+
+#df_forpred = rbind(df_rural, df_urban) 
+
+df_rural$migterm = c(df_rural$totrate_d0[1:28] - 10, 
+                      df_rural$totrate_d0[29:56] + 10, 
+                      df_rural$totrate_d0[57:84])
+df_urban$migterm = c(df_urban$totrate_d0[1:28] - 10, 
+                      df_urban$totrate_d0[29:56] + 10, 
+                      df_urban$totrate_d0[57:84]) #vary the migterm based on mortrate by 10
+
+
+
+df_urban$group = c(rep(-10, 28), rep(10, 28), rep(0, 28))
+df_rural$group = c(rep(-10, 28), rep(10, 28), rep(0, 28))
+
+
+plotdata_rural = data.frame()
+plotdata_urban = data.frame()
+#for each variant of migterm, create a predicted value 
+
+for (i in 1:3) {
+  gi = unique(df_rural$group)[i]
+  preddata = predict(rurmod, df_rural[df_rural$group == gi,])
+  pd = data.frame(cbind(x = seq(200, 1500, by = 100), y = preddata))
+  pd$group = gi
+  plotdata_rural = rbind(plotdata_rural, pd)
+} 
+
+for (i in 1:3) {
+  gi = unique(df_urban$group)[i]
+  preddata = predict(urbmod, df_urban[df_urban$group == gi,])
+  pd = data.frame(cbind(x = seq(200, 1500, by = 100), y = preddata))
+  pd$group = gi
+  plotdata_urban = rbind(plotdata_urban, pd)
+} 
+
+plotdata_urban$type = "urban" 
+plotdata_rural$type = "rural"
+
+plotdata = rbind(plotdata_urban, plotdata_rural)
+plotdata$gg = paste0(plotdata$group, plotdata$type)
+
+
+
+ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(group), shape = as.factor(type))) + geom_point() + geom_line()+
+  xlab("Potential initial mortality rate") + 
+  ylab("Predicted mortality rate") + 
+  theme_bw() +
+  geom_abline(slope = 1) + 
+  annotate("text", x = 1300, y = 1400, angle = 45, label = "Reference y = x") +  
+  tune::coord_obs_pred() + 
+  labs(color = "", title = "Comparison of Urbanicity Groups using Model m1_splineurbi")
+  
+  
+```
+
+
+URBAN AND RURAL PLOTS (zoomed in)
+
+```{r}
+
+tempdf_urban = urban_mnn[c(rep(1,14)),]
+
+tempdf_rural = rural_mnn[c(rep(1,14)),] #dummy data - first 14 rows of original dataframe 
+
+tempdf_urban$totrate_d0 = c(seq(600, 1250, by = 50)) #replace with old mortality rates 
+#tempdf$ft = as.factor(c(1:14)) #unnecessary bc we only intend to compare two years and it doesn't matter which two 
+tempdf_rural$totrate_d0 =  c(seq(600, 1250, by = 50))
+
+df_rural= rbind(tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural) #need to do it this way bc rep causes errors 
+df_urban= rbind(tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban)
+
+
+#df_forpred = rbind(df_rural, df_urban) 
+
+df_rural$migterm = c(df_rural$totrate_d0[1:28] - 10, 
+                      df_rural$totrate_d0[29:56] + 10, 
+                      df_rural$totrate_d0[57:84])
+df_urban$migterm = c(df_urban$totrate_d0[1:28] - 10, 
+                      df_urban$totrate_d0[29:56] + 10, 
+                      df_urban$totrate_d0[57:84]) #vary the migterm based on mortrate by 10
+
+
+
+df_urban$group = c(rep(-10, 28), rep(10, 28), rep(0, 28))
+df_rural$group = c(rep(-10, 28), rep(10, 28), rep(0, 28))
+
+
+plotdata_rural = data.frame()
+plotdata_urban = data.frame()
+#for each variant of migterm, create a predicted value 
+
+for (i in 1:3) {
+  gi = unique(df_rural$group)[i]
+  preddata = predict(rurmod, df_rural[df_rural$group == gi,])
+  pd = data.frame(cbind(x =  seq(600, 1250, by = 50), y = preddata))
+  pd$group = gi
+  plotdata_rural = rbind(plotdata_rural, pd)
+} 
+
+for (i in 1:3) {
+  gi = unique(df_urban$group)[i]
+  preddata = predict(urbmod, df_urban[df_urban$group == gi,])
+  pd = data.frame(cbind(x =  seq(600, 1250, by = 50), y = preddata))
+  pd$group = gi
+  plotdata_urban = rbind(plotdata_urban, pd)
+} 
+
+plotdata_urban$type = "urban" 
+plotdata_rural$type = "rural"
+
+plotdata = rbind(plotdata_urban, plotdata_rural)
+plotdata$gg = paste0(plotdata$group, plotdata$type)
+
+
+
+ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(group), shape = as.factor(type), alpha = as.factor(type), size = as.factor(type))) + geom_point(alpha = as.factor(plotdata$type)) + geom_line()+
+  xlab("Potential initial mortality rate") + 
+  ylab("Predicted mortality rate") + 
+  theme_bw() +
+  geom_abline(slope = 1) + 
+  annotate("text", x = 680, y = 660, angle = 45, label = "Reference y = x") +  
+  tune::coord_obs_pred() + 
+  labs(color = "", title = "Comparison of Rural/Urban specific models") + 
+  scale_alpha_discrete(range = c(0.2, 1)) +
+  scale_size_discrete(range = c(0.8, 1.5)) 
+  
+  
+```
+
+
+Migration from healthy places (ie when migterm = -10; the red lines) appears to affect the predicted rate of rural counties more than urban counties. Among rural counties, the migterm does not appear to affect counties at either end of the extremes for initial rate. Migration from unhealthy places (ie when migterm = 10; the blue lines) appears to be related to constant predicted mortality rate among urban counties. This makes sense because urban counties are large enough that incoming migration may not significantly affect them. Meanwhile, migration from healthy counties (-10 red) appears to be associated with a somewhat linear relationship between initial and predicted mortality for urban and rural counties. The relationship between initial and predicted is very similar for urban and rural counties that experience migration from healthy counties (-10 red). Meanwhile, the relationship between initial and predicted differs greatly between rural and urban counties that experience migration from unhealthy counties (10 blue). We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. This makes sense because rural counties are more sensitive to migration than urban counties since their population is smaller. Healthy rural counties experiencing healthy migration have predicted mortality rates that are ~850 (constant and approximately average, neither healthy nor unhealthy). Meanwhile, rural counties with initial mortality rate >850 experiencing unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (healthier). 
+
+
 
 Other things I think would be worth pursuing/considering
 
