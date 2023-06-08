@@ -1,0 +1,296 @@
+---
+title: "netmig explore"
+author: "Hannah Olson-Williams"
+date: "2023-05-16"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+Data creation
+
+Merge previously created datasets such that each destid now has an urbcode and a "totmig" value indicating the total number of years that a destid had positive net migration between 1011 and 1819 (ie 9 unique time periods) Can be negative or positive (negative indicating negative net migration)
+
+Summary of this variable shown below:
+
+```{r prepare data}
+library(dplyr)
+library(ggplot2)
+load("data_processed/migtree.Rdata") #this dataset is called ppu2 for some reason 
+#urb codes are here already 
+#this contains data for 12 unique time periods: 0809 through 1920 
+
+
+
+load("data_processed/migterm.Rdata") # this dataset is called migterm 
+#this contains data for 2011 through 2019 
+
+
+
+
+netmig = ppu2 %>% filter(year>=1011 & year <= 1819)  %>% 
+  group_by(origid, urbcode) %>% summarise(totmig = sum(pn_mig))
+#totmig = the total number of years that an origid had net migration between 1011 and 1819 (ie 9 unique time periods)
+
+
+
+netmigterm = merge(migterm, netmig, by.x = "destid", by.y = "origid", all.x = TRUE)
+#there are 22 obs lost during this merge (5 unique destids) 
+#these are the result of fipscodes changes - they can be corrected later; ignoring for now since it's already impossible to have a perfect 3142 county dataset 
+netmigterm = netmigterm[!is.na(netmigterm$urbcode),] 
+netmigterm = netmigterm[!is.na(netmigterm$migterm),] #none lost during this step 
+netmigterm = netmigterm[!is.na(netmigterm$totmig),] #none lost during this step 
+
+summary(netmigterm$totmig)
+
+```
+
+Now the modeling
+
+Similar approach as previous
+
+```{r}
+# WITHOUT RACE - TOTAL COUNTY VALUES ONLY 
+
+library(splines)
+library(lme4)
+
+migmodm = netmigterm %>% arrange(year) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+
+migmtemp = na.omit(migmodm) #no additional NAs removed  
+mn = data.frame(migmodm)
+
+mnn = mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+mnn$ft = as.factor(mnn$t)
+
+# i rescaled these vars once to confirm that the results were unchanged by the "Warning: Some predictor variables are on very different scales: consider rescaling" message 
+# bic values were slightly different using standardized values, but their pattern/relative order did not change 
+# mnn$totrate_d0 = scale(mnn$totrate_d0)
+# mnn$migterm = scale(mnn$migterm)
+# mnn$totmig = scale(mnn$totmig) 
+
+
+
+
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+
+
+m1_urb = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + totmig, data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*totmig + totmig, data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_urbi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + migterm*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_urbmig = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totmig, 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+m1_urbmorti = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totrate_d0*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+m1_urbmortmigi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totrate_d0*factor(urbcode) +migterm*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+
+
+BIC(m1, m1_spline44, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi)
+
+
+```
+
+Based on the above BIC scores, I have chosen to remove the "totmig" term from possible models. Maybe this term would be more useful in a model that is not autoregressive since it is a summary of netmigration across all years.
+
+A model with an interaction term between migterm and urbanicity has a lower BIC score than the model previously found to be best fitting using splines (m1_spline44). I will now test the addition of urbanicity to models with splines
+
+```{r}
+m1_urbi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + migterm*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+
+m1_splineurb = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4) + factor(urbcode), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+m1_splineurbi = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4) + factor(urbcode) + factor(urbcode) * migterm, data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+BIC(m1_urbi, m1_spline44, m1_splineurb, m1_splineurbi)
+
+```
+
+getting the following message for m1_splineurbi: "fixed-effect model matrix is rank deficient so dropping 1 column / coefficient"
+
+m1_splineurbi has the lowest BIC but based on the above message, seems like lots of overfitting!! I need to learn considerations besides BIC to take into account during model selection
+
+```{r , echo = FALSE, message=FALSE, warning=FALSE}
+
+tempdf = mnn[c(rep(1,14)),] #dummy data - first 14 rows of original dataframe 
+
+tempdf$totrate_d0 = c(seq(200, 1500, by = 100)) #replace with old mortality rates 
+#tempdf$ft = as.factor(c(1:14)) #unnecessary bc we only intend to compare two years and it doesn't matter which two 
+
+tempmigdf = rbind(tempdf, tempdf, tempdf, tempdf, tempdf, tempdf) #need to do it this way bc rep causes errors 
+
+tempmigdf$urbcode = c(rep(1, 14), rep(2,14), rep(3,14), rep(4,14), 
+                      rep(5,14), rep(6,14))
+
+
+
+tempmigdf$migterm = tempmigdf$totrate_d0 #set constant 
+
+
+plotdata = data.frame()
+
+#for each variant of migterm, create a predicted value 
+for (i in 1:6) {
+  
+  gi = unique(tempmigdf$urbcode)[i]
+  preddata = predict(m1_splineurbi, tempmigdf[tempmigdf$urbcode == gi,])
+  pd = data.frame(cbind(x = seq(200, 1500, by = 100), y = preddata))
+  pd$urbcode = gi
+  plotdata = rbind(plotdata, pd)
+}
+
+
+
+
+ggplot(plotdata, aes(x= x, y = y, group = urbcode, color = as.factor(urbcode))) + geom_point() + geom_line()+
+  xlab("Potential initial mortality rate") + 
+  ylab("Predicted mortality rate") + 
+  theme_bw() +
+  geom_abline(slope = 1) + 
+  annotate("text", x = 1300, y = 1400, angle = 45, label = "Reference y = x") +  
+  tune::coord_obs_pred() + 
+  labs(color = "", title = "Comparison of Urbanicity Groups using Model m1_splineurbi")
+  
+  
+
+
+```
+
+The plot above shows differences in predicted mortality related to urbanicity when the migterm is equal to the initial mortality rate
+
+Most interesting urbcats: 1, 6, 2, and maybe 4
+
+As a reminder: 1= large central metro; 2 = large fringe metro; 3 = medium metro; 4 = small metro; 5 = micropolitan; 6 = noncore 
+
+
+```{r}
+
+
+tempdf = mnn[c(rep(1,14)),] #dummy data - first 14 rows of original dataframe 
+
+tempdf$totrate_d0 = c(seq(200, 1500, by = 100)) #replace with old mortality rates 
+#tempdf$ft = as.factor(c(1:14)) #unnecessary bc we only intend to compare two years and it doesn't matter which two 
+
+tempmigdf = rbind(tempdf, tempdf, tempdf, tempdf, tempdf, tempdf) #need to do it this way bc rep causes errors 
+
+tempmigdf$urbcode = c(rep(1, 14), rep(6,14), rep(1,14), 
+                      rep(6,14), rep(1,14), rep(6,14))
+
+
+
+
+tempmigdf$migterm = c(tempmigdf$totrate_d0[1:28] - 10, 
+                      tempmigdf$totrate_d0[29:56] + 10, 
+                      tempmigdf$totrate_d0[57:84]) #vary the migterm based on mortrate by 10
+
+
+
+# tempmigdf$migterm = c(tempmigdf$totrate_d0[1:18] - 10, 
+#                       tempmigdf$totrate_d0[19:36] + 10, 
+#                       tempmigdf$totrate_d0[37:54]) #vary the migterm based on mortrate by 10
+
+tempmigdf$group = c(rep(-10, 28), rep(10, 28), rep(0, 28))
+plotdata = data.frame()
+
+#for each variant of migterm, create a predicted value 
+
+for (i in 1:3) {
+for (j in 1:length(unique(tempmigdf$urbcode))) {
+  gi = unique(tempmigdf$group)[i]
+  ui = unique(tempmigdf$urbcode)[j]
+  preddata = predict(m1_splineurbi, tempmigdf[tempmigdf$group == gi & tempmigdf$urbcode == ui,])
+  pd = data.frame(cbind(x = seq(200, 1500, by = 100), y = preddata))
+  pd$group = gi
+  pd$urbcode = ui
+  plotdata = rbind(plotdata, pd)
+}
+} 
+
+
+plotdata$gg = paste0(plotdata$group, plotdata$urbcode)
+
+ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(group), shape = as.factor(urbcode))) + geom_point() + geom_line()+
+  xlab("Potential initial mortality rate") + 
+  ylab("Predicted mortality rate") + 
+  theme_bw() +
+  geom_abline(slope = 1) + 
+  annotate("text", x = 1300, y = 1400, angle = 45, label = "Reference y = x") +  
+  tune::coord_obs_pred() + 
+  labs(color = "", title = "Comparison of Urbanicity Groups using Model m1_splineurbi")
+  
+  
+
+
+```
+
+It's interesting that the most urban counties appear to have an approximately 1-1 relationship between initial and predicted mortality rate. This makes sense because high population counties are less likely to be affected by population flux. Is it possible that lack of data for urban counties is also a factor? Few urban counties = little variation in the relationship between initial and predicted 
+
+
+Rural counties follow trends seen before. Again, this makes sense; since the majority of counties are rural, the rural plot is going to be similar to an unstratified plot. There is some evidence of a "threshold" at ~900 initial rate where the effect of migration reverses direction. When destination counties have initial rates less than 900, migration from origin counties with worse health seems to worsen (increase) the predicted rate of the destination counties. However, when destination counties have initial rates greater than 900, migration from origin counties with worse health seems to improve the predicted rate of the destination counties. On the other hand, when destination counties have initial rates greater than 900, migration from origin counties with better health seems to worsen the predicted rate of the destination counties. 
+
+
+I'm not sure this makes sense. Migration from unhealthy counties (10) to unhealthy counties (>900 initial) is related to improved health in the destination. But migration from healthy counties (-10) to unhealthy counties (>900 initial) is related to worse health in the destination. Is there something magical about the 900 or 1200 points of flux? 
+
+
+
+
+Other things I think would be worth pursuing/considering
+
+Recent CHRR switch to 9 cat RUCC codes for rurality/urbanicity - are there noticable differences in how we are able to measure trends in these groups with 6 versus 9? what does this switch mean? 
+
+simulation of place based health as a function of migration ...need to do more thinking 
+
+Association between migration and ranks... justification for spatial considerations in future ranking methods
+
+Exploration of ranks within spatially defined regions other than states; use migration trends to justify nonstate regions 
+
+Exploration of relative ranks, ie ranks "within" county or ranks of improvement 
+
+What would happen to the ranks in rural counties if they had as much data as urban counties 
+ie how much does missingness affect ranks (this one feels important and also doable to me! but less directly relevant) ie we could impute values for small counties and/or add noise to estimates in urban counties and compare 
+
+
+
+ 
