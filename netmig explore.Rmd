@@ -27,8 +27,8 @@ load("data_processed/migterm.Rdata") # this dataset is called migterm
 
 
 
-
-netmig = ppu2 %>% filter(year>=1011 & year <= 1819)  %>% 
+#need to remove years prior to 2011 due to IRS methodology change 
+netmig = ppu2 %>% filter(year>=1112 & year <= 1819)  %>% 
   group_by(origid, urbcode) %>% summarise(totmig = sum(pn_mig))
 #totmig = the total number of years that an origid had net migration between 1011 and 1819 (ie 9 unique time periods)
 
@@ -81,6 +81,14 @@ mnn$ft = as.factor(mnn$t)
 
 #(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
 #(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+
+
+mmig = lme4::lmer(totrate_d1 ~ ft + (1+t|destid) + migterm, data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+mnon = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
 m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = mnn,
                 control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -120,7 +128,7 @@ m1_urbmortmigi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migter
 
 
 
-BIC(m1, m1_spline44, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi)
+BIC(mmig, mnon, m1, m1_spline44, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi)
 
 
 ```
@@ -577,6 +585,10 @@ ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(group), shape = 
 
 
 Migration from healthy places (ie when migterm = -10; the red lines) appears to affect the predicted rate of rural counties more than urban counties. Among rural counties, the migterm does not appear to affect counties at either end of the extremes for initial rate. Migration from unhealthy places (ie when migterm = 10; the blue lines) appears to be related to constant predicted mortality rate among urban counties. This makes sense because urban counties are large enough that incoming migration may not significantly affect them. Meanwhile, migration from healthy counties (-10 red) appears to be associated with a somewhat linear relationship between initial and predicted mortality for urban and rural counties. The relationship between initial and predicted is very similar for urban and rural counties that experience migration from healthy counties (-10 red). Meanwhile, the relationship between initial and predicted differs greatly between rural and urban counties that experience migration from unhealthy counties (10 blue). We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. This makes sense because rural counties are more sensitive to migration than urban counties since their population is smaller. Healthy rural counties experiencing healthy migration have predicted mortality rates that are ~850 (constant and approximately average, neither healthy nor unhealthy). Meanwhile, rural counties with initial mortality rate >850 experiencing unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (healthier). 
+
+
+More noise in rural = more flat 
+larger rural/urban differences in healthy places due to lack of data 
 
 
 
