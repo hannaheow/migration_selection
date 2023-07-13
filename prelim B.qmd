@@ -13,7 +13,7 @@ The long-term goal is to contribute to understanding the mechanisms by which mob
 
 [**Aim 2:** Estimate the effects of self-selected migration on county-level health]{.underline}. **Hypothesis 2A:** County-to-county migration does not occur at random. **Hypothesis 2B:** County-to-county migration patterns improve the predictability of autoregressive models of county-level measures of health, even after adjusting for spatial autocorrelation. **Hypothesis 2C:** The effect of intercounty migration on county-level health differs significantly between rural and urban counties.
 
-[**Aim 3:** Identify counties, time periods, and sociodemographic groups that experience anomalous county-to-county migration patterns.]{.underline} Our working hypothesis is that extremely rural counties and extremely low income groups experience anomalous migration patterns.
+[**Aim 3:** Identify counties, time periods, and educational attainment groups that experience anomalous county-to-county migration patterns.]{.underline} Our working hypothesis is that extremely rural counties and extremely low income groups experience anomalous migration patterns.
 
 At the conclusion of this work, we will be able to definitively state the relationship between population mobility and population health. We will have established rural-urban differences in health at a single time point, established rural-urban differences in health as they relate to mobility, and investigated outliers in the relationship between mobility and health. These findings will illuminate the mechanisms by which place-based health factors change as populations change. Understanding and quantifying county-level mobility is inherent to understanding and quantifying county-level health.
 
@@ -33,11 +33,11 @@ There are many potential mechanisms by which urbanicity and the movement between
 
 According to Lee's theory of migration [@lee1966], migration is selective, meaning that the individuals who migrate are not a random sample of the population of the origin. Migration occurs in response to a "push" or a "pull" -- migrants are "pushed" to leave an origin and "pulled" to a destination. "Pull" factors are more often associated with positive selection; migrants who are "pulled" to a destination due to perceived benefits are more likely to have high income or education status. Contrarily, migrants who are "pushed" to leave an origin are likely to have faced hardship in some form. In some cases, this is a negatively selected group including individuals who have lost jobs or suffered from climate change events; in other cases, an entire population may be "pushed" to migrate due to war or famine. Migration is often bimodal in that only the most advantaged and the least advantaged individuals relocate. This logic could be extended to the health distribution of migrants: only the most and least healthy individuals migrate. According to Norman and colleagues, migrants who move from more resource depleted regions to less resource depleted regions have better health on average than the population in their destination while migrants who move from less depleted regions to more depleted regions have worse health on average than the population in their destination [@norman2005]. Additionally, when the barriers between origin and destination are particularly high, migrants are often healthier on average than the people living in their destination, either because they have been selected through the migration process or because unhealthy people are less likely to choose to move when the barriers are high [@halliday2008]. Without understanding the individual decisions or circumstances that lead to migration, we cannot assess whether changes in health are the result of a "push" or a "pull." Disentangling the directionality of changes in health versus changes in migration is one challenge of using county-level data.
 
-Since we propose an ecological study using county-level data, we can only adjust for county-level differences and cannot attempt to measure individual-level differences. County-level data can be useful to understand how place is related to average health. In particular, county-level analyses may be useful in informing local policies to raise the *average* health of a county, and county-level sociodemographic analyses may be useful in informing local policies to reduce disparities within a county -- thus, county-level analyses are useful in addressing both of the primary goals of population health: increasing the health of the population overall and reducing health disparities [@kindig2017]. As we have seen during the COVID pandemic, local public health departments, school boards, and faith-based organizations have the power to make decisions which affect public health at an "average" level. County-level analyses may help local decision-makers understand the patterns and processes of their communities. Additionally, because we use a dataset which contains all 3142 US counties, rural counties are better represented than urban counties despite having smaller total population.
+Since we propose an ecological study using county-level data, we can only adjust for county-level differences and cannot attempt to measure individual-level differences. County-level data can be useful to understand how place is related to average health. In particular, county-level analyses may be useful in informing local policies to raise the *average* health of a county, and county-level sociodemographic analyses may be useful in informing local policies to reduce disparities within a county -- thus, county-level analyses are useful in addressing both of the primary goals of population health: increasing the health of the population overall and reducing health disparities [@kindig2017]. As we have seen during the COVID pandemic, local public health departments, school boards, and faith-based organizations have the power to make decisions which affect public health at an "average" level. County-level analyses may help local decision-makers understand the patterns and processes of their communities. Additionally, because we use a dataset which contains all 3142 US counties, rural counties are better represented than urban counties despite having smaller total population. We use county-level data because that is what is available, but also because we cannot know exactly which individuals are in each county at time 0 and at time 1, creating treatment and outcome groups that differ at the individual-level, but not at the county-level. Of course there is information lost when using group-level data, and the downsides of such an ecological study design have been enumerated many times previously (CITE); however, by studying county-level data, we can draw attention to environmental county-level health factors - factors that are likely to have different effects when comparing individuals but may remain largely constant when comparing groups or counties. <!--# more here about ecological fallacy, maup, bimodal patterns??? -->
 
 #### [**Innovation**]{.underline}
 
-The relationship between place and health has been studied many times before. However, many existing studies measure the effects of place on health at a single point in time, without accounting for interconnectedness via migration. Additionally, though time-series forecasting of county-level mortality rates has been done many times previously, our *migrationally* autoregressive model (which accounts for county-to-county migration rates) is unique -- many existing models account for spatial correlation between counties but do not account for migration rates between counties. There are many dimensions of migration: time, space, age, neighborhood, health, income, etc. In our third aim, tensor factorization allows us to assess each dimension of migration separately. Tensor factorization has been used to study migration using the IRS migration flow dataset, but to our knowledge, it has not yet been used to assess sociodemographic dimensions of migration. Our application of tensor factorization will allow us to create a better picture of who migrates, when they migrate, and where they migrate on average within the US which we can then use to study the relative effect of migration on county-level health.
+The relationship between place and health has been studied many times before. However, many existing studies measure the effects of place on health at a single point in time, without accounting for interconnectedness via migration. Additionally, though time-series forecasting of county-level mortality rates has been done many times previously, our *migrationally* autoregressive model (which accounts for county-to-county migration) is unique -- many existing models account for spatial correlation between counties but do not account for migration between counties. There are many dimensions of migration: time, space, age, neighborhood, health, income, etc. In our third aim, tensor factorization allows us to assess each dimension of migration separately. Tensor factorization has been used to study migration using the IRS migration flow dataset, but to our knowledge, it has not yet been used to assess sociodemographic dimensions of migration. Our application of tensor factorization will allow us to create a better picture of who migrates, when they migrate, and where they migrate on average within the US which we can then use to study the relative effect of migration on county-level health.
 
 #### [**Approach**]{.underline}
 
@@ -45,42 +45,25 @@ The relationship between place and health has been studied many times before. Ho
 
 This aim is complete. Olson-Williams, H.E., Grey, S.T., and Cochran, A.L. have published a manuscript titled "Ecological Study of Urbanicity and Self-reported Poor Mental Health Days Across US Counties" in the Community Mental Health Journal. Please refer to the published paper [here](https://doi.org/10.1007%2Fs10597-022-01082-x).
 
-[Data]{.underline}: Data on US counties was provided by the University of Wisconsin's County Health Rankings and Roadmaps (CHRR). CHRR collects and aggregates publicly available data at the county-level. Therefore, this is an ecological study, and the unit of analysis for this paper is a county. We analyzed the 2021 CHRR dataset for all 3142 US counties for which data is available. The primary exposure is urbanicity. Each county in the dataset has been assigned an urbanicity category based on the 2013 National Center for Health Statistics (NCHS) Urban--Rural Classification Scheme for Counties (Rothwell et al., n.d.). The NCHS urban--rural classification scheme relies on information such as population density as well as proximity to the largest city within a metropolitan statistical area. The six categories are as follows: large central metro (n = 68), large fringe metro (n = 368), medium metro (n = 372), small metro (n = 357), micropolitan (n = 641), and noncore (n = 1335). It is worth noting that the four "Metro" categories contain 85% of the total US population.
+[Data]{.underline}: Data on US counties was provided by the University of Wisconsin's County Health Rankings and Roadmaps (CHRR). CHRR collects and aggregates publicly available data at the county-level. Therefore, this is an ecological study, and the unit of analysis for this paper is a county. We analyzed the 2021 CHRR dataset for all 3142 US counties for which data is available. The primary exposure is urbanicity. Each county in the dataset has been assigned an urbanicity category based on the 2013 National Center for Health Statistics (NCHS) Urban--Rural Classification Scheme for Counties[@rothwell]. The NCHS urban--rural classification scheme relies on information such as population density as well as proximity to the largest city within a metropolitan statistical area. The six categories are as follows: large central metro (n = 68), large fringe metro (n = 368), medium metro (n = 372), small metro (n = 357), micropolitan (n = 641), and noncore (n = 1335). It is worth noting that the four "Metro" categories contain 85% of the total US population.
 
-The **primary outcome of interest is poor mental health days**, an age-adjusted average number of mentally unhealthy days reported in the past 30 days. This is a self-reported variable collected by the BRFSS. The most recent available data represents 2018. We chose to use this measure of self-reported health because BRFSS is the largest continuously conducted health survey system in the world (CDC - About BRFSS, 2019), and BRFSS county-level estimates span all 3142 US counties. These estimates are well-validated and commonly used (Pierannunzi et al., 2013).
+The **primary outcome of interest is poor mental health days**, an age-adjusted average number of mentally unhealthy days reported in the past 30 days. This is a self-reported variable collected by the BRFSS. The most recent available data represents 2018. We chose to use this measure of self-reported health because BRFSS is the largest continuously conducted health survey system in the world [@cdc-ab2019], and BRFSS county-level estimates span all 3142 US counties. These estimates are well-validated and commonly used [@pierannunzi2013].
 
-We controlled for several variables that might confound the relationship between urbanicity and mental health. Broadly, the sociodemographic makeup of a county varies with urbanicity and is expected to also influence mental health of persons living in the county. The first variable we controlled for is median household income: the income level at which half of households in the county earn more, to measure the typical income in a county. We controlled for median household income, since higher income allows county residents to enjoy greater access to mental health care, which may be positively related to mental health (Grembowski et al., 2002). For similar reasons, we also controlled for education (Chevalier & Feinstein, 2006). Thus, the second control variable was some college: the percentage of adults ages 25--44 with some post-secondary education. The third control variable was percent over 65: the percentage of the population that are over age 65, since age is associated with decreased rates of self-reported poor mental health (NIMH» Mental Illness, n.d.). Another control variable was US state. We added a control variable for state to account for potential state-level effects since our outcome variable comes from BRFSS which uses state-level sampling methods.
+We controlled for several variables that might confound the relationship between urbanicity and mental health. Broadly, the sociodemographic makeup of a county varies with urbanicity and is expected to also influence mental health of persons living in the county. The first variable we controlled for is median household income: the income level at which half of households in the county earn more, to measure the typical income in a county. We controlled for median household income, since higher income allows county residents to enjoy greater access to mental health care, which may be positively related to mental health [@grembowski2002]. For similar reasons, we also controlled for education [@chevalier2006]. Thus, the second control variable was some college: the percentage of adults ages 25--44 with some post-secondary education. The third control variable was percent over 65: the percentage of the population that are over age 65, since age is associated with decreased rates of self-reported poor mental health [@nimh]. Another control variable was US state. We added a control variable for state to account for potential state-level effects since our outcome variable comes from BRFSS which uses state-level sampling methods.
 
-We also controlled for race/ethnicity since self-reported mental health differs by race/ethnicity. For example, during the pre-vaccine COVID-19 pandemic, adults identifying as Hispanic had 20% to 400% greater odds of experiencing poor mental health than adults identifying as non-Hispanic (Lee & Singh, 2021). Additionally, people who identify as Black are historically more likely to report lower levels of life satisfaction than people identifying as white (Hughes & Thomas, 1998). Therefore, we controlled for the variables Percent Black: the percentage of the population that is non-Hispanic Black or African American, and Percent Hispanic: the percentage of the population that is Hispanic.
+We also controlled for race/ethnicity since self-reported mental health differs by race/ethnicity. For example, during the pre-vaccine COVID-19 pandemic, adults identifying as Hispanic had 20% to 400% greater odds of experiencing poor mental health than adults identifying as non-Hispanic [@lee2021]. Additionally, people who identify as Black are historically more likely to report lower levels of life satisfaction than people identifying as white [@hughes1998]. Therefore, we controlled for the variables Percent Black: the percentage of the population that is non-Hispanic Black or African American, and Percent Hispanic: the percentage of the population that is Hispanic.
 
-**We examined eight potential mediators**. Social associations is the number of membership associations in a county per 10,000 population. Access to exercise is the percentage of the population with adequate access to locations for physical activity. Food environment index is calculated as a ratio of the percent of each county's population experiencing limited access to healthy foods to the percent of each county's population experiencing food insecurity. The percent of the population experiencing limited access to health foods is calculated as a function of poverty and distance to a grocery store while food insecurity is a modeled estimate from the Core Food Insecurity Model (Map the Meal Gap Data \| Feeding America, n.d.). Mental health providers is the ratio of population to mental health providers. Air pollution is the average daily density of fine particulate matter in micrograms per cubic meter. Violent crime is the number of reported violent crime offenses per 100,000 population. Severe housing cost burden is the percentage of households that spend 50% or more of their income on housing. Income inequality is the ratio of household income at the 80th percentile to income at the 20th percentile.
+**We examined eight potential mediators**. Social associations is the number of membership associations in a county per 10,000 population. Access to exercise is the percentage of the population with adequate access to locations for physical activity. Food environment index is calculated as a ratio of the percent of each county's population experiencing limited access to healthy foods to the percent of each county's population experiencing food insecurity. The percent of the population experiencing limited access to health foods is calculated as a function of poverty and distance to a grocery store while food insecurity is a modeled estimate from the Core Food Insecurity Model [@mapthe]. Mental health providers is the ratio of population to mental health providers. Air pollution is the average daily density of fine particulate matter in micrograms per cubic meter. Violent crime is the number of reported violent crime offenses per 100,000 population. Severe housing cost burden is the percentage of households that spend 50% or more of their income on housing. Income inequality is the ratio of household income at the 80th percentile to income at the 20th percentile.
 
-[Approach:]{.underline} We estimated the average relationship between urbanicity and poor mental health days using mixed effects linear regression models. For simplicity, we built models that compare counties from one urbanicity category at a time against small metro counties. Hence, five comparisons were made: large central metro, large fringe metro, medium metro, micropolitan, and noncore vs. small metro. Each linear regression model included poor mental health days as the dependent variable and urbanicity as the independent variable. State was included as a random effect to accommodate within-state correlation and variation due to state differences in BRFSS approaches. Models were fit with and without adjustments for the control variables. Control variables were accounted for using inverse probability weighting (IPW). IPW entails weighting each county by the multiplicative inverse of the propensity scores, i.e., the probability of belonging to the county's urbanicity category conditional on the confounding variables (i.e., education, income, age, percent Black, and percent Hispanic). This approach was used as opposed to including control variables directly in the model to avoid issues with misspecification of their influence in the linear regression model. Propensity scores needed for IPW were calculated from a logistic regression model for each urbanicity comparison. Hence, five logistic regression models were fit. Small metro was chosen as the reference category to avoid propensity scores near 0 or 1, since small metro is one of the middle urban categories. By contrast, an urban category at one extreme (e.g., large central metro) would lead to propensities close to 0 or 1 when compared to the other extreme (e.g. noncore). Education, income, percent Black, percent Hispanic, and age are treated as independent variables in each logistic regression model. Considering that education and income have a strong relationship to mental health (Araya et al., 2003) and vary greatly across counties, an interaction term between income and education is included in the logistic regression model. In addition, natural cubic splines with three degrees of freedom each were used for education and household income. To validate this choice of model, other models were considered and compared to our model based on Akaike Information Criteria (AIC). We examined eight potential mediators using a combination of inverse probability weighting and random effects to account for potential confounders of the urban-mental health relationship. Mediation analysis was conducted in two steps [@imai2010] [@vanderweele2014] (Imai et al., [2010](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9838413/#CR22); VanderWeele & Vansteelandt, [2014](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9838413/#CR48)). First, we built a linear regression model for each urbanicity comparison relating potential mediators and urbanicity to poor mental health. These models included the eight mediators as independent variables but were otherwise identical to models from our primary analysis: poor mental health days was the dependent variable, urbanicity was an independent variable, state was a random effect, and IPW was used to adjust for control variables. Second, we built a linear regression model for each urbanicity comparison and each potential mediator. In this case, the potential mediator was the outcome variable, urbanicity was the independent variable, state was a random effect, and IPW was used to adjust for control variables. 
+![Table 1: Mean (SD) characteristics of US counties by urbanicity category](images/urbtable1-01.png)
 
-[Results and future directions]{.underline}: Controlling for state, age, income, education, and race/ethnicity, large central metro counties reported 0.24 fewer average poor mental health days than small metro counties (*t* = − 5.78, *df* = 423, *p* \< .001). Noncore counties had 0.07 more average poor mental health days than small metro counties (*t* = 3.06, *df* = 1690, p = 0.002). Better mental health in large central metro counties was partly mediated by differences in the built environment, such as better food environments. Poorer mental health in noncore counties was not mediated by considered mediators. Our findings shed light on contemporary questions about mental health in the US. Is mental health better or worse in urban areas than rural areas? There are arguments on both sides: urban areas have greater access to resources like mental health providers and social associations, but rural areas have less violent crime or income inequality and greater access to green spaces. Finding that urban counties are associated with better, not worse, mental health is contrary to what might be expected based on what we know from different countries and earlier time periods. For example, a study published in 2000 of urban--rural mental health differences in Great Britain found that individuals living in urban centers had higher rates of three indicators of poor mental health (Paykel et al., [2000](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9838413/#CR35)), and a 2007 study of Chinese migrant workers found that workers living in urban areas had worse mental health than workers in rural areas (Li & Rose, [2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9838413/#CR28)). Thus, there appear to be unique factors at play when it comes to mental health in contemporary US. In our next two aims, we use migration as a possible explanation for these US-specific differences in the relationship between place and health.   
+[Approach:]{.underline} We estimated the average relationship between urbanicity and poor mental health days using mixed effects linear regression models. For simplicity, we built models that compare counties from one urbanicity category at a time against small metro counties. Hence, five comparisons were made: large central metro, large fringe metro, medium metro, micropolitan, and noncore vs. small metro. Each linear regression model included poor mental health days as the dependent variable and urbanicity as the independent variable. State was included as a random effect to accommodate within-state correlation and variation due to state differences in BRFSS approaches. Models were fit with and without adjustments for the control variables. Control variables were accounted for using inverse probability weighting (IPW). IPW entails weighting each county by the multiplicative inverse of the propensity scores, i.e., the probability of belonging to the county's urbanicity category conditional on the confounding variables (i.e., education, income, age, percent Black, and percent Hispanic). This approach was used as opposed to including control variables directly in the model to avoid issues with misspecification of their influence in the linear regression model. Propensity scores needed for IPW were calculated from a logistic regression model for each urbanicity comparison. Hence, five logistic regression models were fit. Small metro was chosen as the reference category to avoid propensity scores near 0 or 1, since small metro is one of the middle urban categories. By contrast, an urban category at one extreme (e.g., large central metro) would lead to propensities close to 0 or 1 when compared to the other extreme (e.g. noncore). Education, income, percent Black, percent Hispanic, and age are treated as independent variables in each logistic regression model. Considering that education and income have a strong relationship to mental health [@araya2003] and vary greatly across counties, an interaction term between income and education is included in the logistic regression model. In addition, natural cubic splines with three degrees of freedom each were used for education and household income. To validate this choice of model, other models were considered and compared to our model based on Akaike Information Criteria (AIC). We examined eight potential mediators using a combination of inverse probability weighting and random effects to account for potential confounders of the urban-mental health relationship. Mediation analysis was conducted in two steps.[@imai2010; @vanderweele2014] First, we built a linear regression model for each urbanicity comparison relating potential mediators and urbanicity to poor mental health. These models included the eight mediators as independent variables but were otherwise identical to models from our primary analysis: poor mental health days was the dependent variable, urbanicity was an independent variable, state was a random effect, and IPW was used to adjust for control variables. Second, we built a linear regression model for each urbanicity comparison and each potential mediator. In this case, the potential mediator was the outcome variable, urbanicity was the independent variable, state was a random effect, and IPW was used to adjust for control variables. 
 
-Restate aims from above; put all hypotheses in one clump; add variable description (in a table?) exposure, outcome, etc  ; include regression model equations in approach- three models, one for each hypothesis, add table 1 for all data   
+[Results and future directions]{.underline}: Controlling for state, age, income, education, and race/ethnicity, large central metro counties reported 0.24 fewer average poor mental health days than small metro counties (*t* = − 5.78, *df* = 423, *p* \< .001). Noncore counties had 0.07 more average poor mental health days than small metro counties (*t* = 3.06, *df* = 1690, p = 0.002). Better mental health in large central metro counties was partly mediated by differences in the built environment, such as better food environments. Poorer mental health in noncore counties was not mediated by considered mediators. Our findings shed light on contemporary questions about mental health in the US. Is mental health better or worse in urban areas than rural areas? There are arguments on both sides: urban areas have greater access to resources like mental health providers and social associations, but rural areas have less violent crime or income inequality and greater access to green spaces. Finding that urban counties are associated with better, not worse, mental health is contrary to what rateht be expected based on what we know from different countries and earlier time periods. For example, a study published in 2000 of urban--rural mental health differences in Great Britain found that individuals living in urban centers had higher rates of three indicators of poor mental health [@paykel2000], and a 2007 study of Chinese migrant workers found that workers living in urban areas had worse mental health than workers in rural areas [@li2017]. Thus, there appear to be unique factors at play when it comes to mental health in contemporary US. In our next two aims, we use migration as a possible explanation for these US-specific differences in the relationship between place and health.
 
-[**Aim 2:** Estimate the effects of self-selected migration on county-level health**.**]{.underline} **Hypothesis 2A:** County-level migration does not occur at random. **Hypothesis 2B:** County-to-county migration patterns improve the predictability of autoregressive models of county-level measures of health. **Hypothesis 2C:** The effect of intercounty migration on county-level health differs significantly between rural and urban counties.
+[**Aim 2:** Estimate the effects of self-selected migration on county-level health.]{.underline} **Hypothesis 2A:** County-to-county migration patterns improve the explainability of autoregressive models of county-level mortality. **Hypothesis 2B:** The effect of intercounty migration on county-level health differs significantly between rural and urban counties. **Hypothesis 2C:** County-level migration does not occur at random; migration and mortality are dependent.
 
-[Data:]{.underline} To study the relationship between health and migration, we use county-level estimates of age-adjusted mortality available through CDC WONDER joined with IRS county-to-county migration flow data. Data for mortality is historically easier to collect and more accurate than other measures of human health. CITE Death has a clear and common definition making it possible to consistently estimate mortality rates across countries, health systems, and time periods. CITE. Mortality as a measure of length of life also has important policy and health equity implications and can be used to assess which individuals or groups are likely to live longest and which individuals or groups may be most in need of additional care. Data represent the years 2011 through 2019. We chose to remove the year 2020 from our dataset because across the US, the median county-level mortality rate rose from 713.2 per 100,000 in 2019 to 828.5 per 100,000 in 2020. This unprecedented change in mortality is difficult to model since it occurred so unpredictably **citations here from other studies that have removed 2020 data???** IRS migration data are available for 1990 through 2019. However, in 2011, the IRS changed their methods to produce migration estimates based on a full year of income tax filings rather than a partial year. Prior to 2011, migration estimates represented between 95 and 98 percent of total annual income tax filings and excluded income taxes filed after September of each calendar year^15^; estimates after 2011 include all annual income tax filings collected for each year. Therefore, we have chosen only to include data after the 2011 change in IRS methodology. One final limitation of IRS data (which we are attempting to leverage as a strength in our analyses) is that households that do not file tax returns cannot be included in migration estimates. Therefore, university students, low-income households, and workers who receive informal wages are systematically missing from IRS migration estimates. These individuals may be more likely to be included in ACS and Census estimates^16^ (which we use in Aim 3) though no population estimate is perfect. Because IRS county-to-county migration data includes only individuals who file taxes with the US government both before and after they migrate, we assume that individuals represented in the IRS migration flows data are less likely to be pushed to migrate by potentially health-related factors such as violence, famine, and corruption than individuals who migrate but are excluded from the IRS data. Therefore, any differences in changes in health between counties may be the result of self-selection by IRS-represented migrants or health-related selection by nonIRS-represented migrants. Despite these limitations, IRS migration data has been used many times in the past to complete complex and accurate analyses of US migration patterns. For instance, IRS migration flow data has been used to estimate the effects of sea-level rise on geographic distribution of the US population,^17^ measure recovery after Hurricanes Katrina and Rita^18^, and assess the economic impacts of migration resulting from environmental hazards^19^.
-
-[Approach]{.underline}: Autoregressive models have commonly been used to estimate mortality rates; for instance, in a 2011 paper, county-level mortality was modeled using spatial autoregressive models in which each county's relative position to other counties as well as its historical mortality rates were considered (Yang, Jensen, Haran). Another similar paper (Sparks and Sparks) used an autoregressive model with county-level estimates of mortality that were standardized for measures of income and employment, population density and rurality, and race/ethnicity. Similarly, early in the COVID-19 pandemic, researchers used a spatial autoregressive model to assess the relationships between county-level COVID-19 mortality rates and county-level sociodemographic characteristics (Fielding-Miller, Sundaram, Brouwer). This method has also been extended to age-group and country-level data to explain cohort effects within countries. (Li and Lu 2017) Finally, a 2020 paper adapted this method using age-group data to estimate country-level life expectancy more efficiently, more accurately, and with greater precision for younger populations (Shi). In this aim, we extend previous autoregressive models to account for county interconnectedness. Our **primary outcome of interest is county-level age-adjusted mortality**, which we predict using a combination of lagged county-level mortality, spatial autocorrelation (Moran's I), and migration. To quantify migration, we develop a novel "migration term" which accounts for the mortality rates of individuals who have moved to a county of interest during a given period, essentially a weighted average of the mortality rates of all the origin counties. This approach requires the assumption that all migration occurs at random - ie the average mortality rate of any group of migrants from a specific origin county is approximately equivalent to the mortality rate of their origin county. We calculated the following for each change in year and for each destination county
-
-$$ 
-migration_{it} = \frac{ \sum_{i=1}^{k} out_o rate_{o,t-1} + rate_{i,t-1} (pop_{i, t-1} - out_i)}{ \sum_{i=1}^{k}  out_o + (pop_{i,t-1} - out_i)}
-$$
-
-where\
-$out_o$ represents the number of migrants from a unique origin county $o$ who migrated to a destination county $i$ between year $t$ and year $t-1$. \
-$rate_{o,t-1}$ is the mortality rate of an unique origin county $o$ at initial year $t-1$\
-$rate_{i, t-1}$ is the mortality rate of an unique destination county $i$ at initial year $t-1$\
-$pop_{i, t-1}$ is the population of an unique destination county $i$ at initial year $t-1$\
-$out_i$ is the number of migrants who left each unique destination county $i$ between year $t$ and year $t-1$.
-
-Note that we complete all analyses from the perspective of a "destination" county. To simplify things, we have chosen to focus on the effects of migration to a destination rather than away from an origin. We used a multilevel autoregressive model to explain county age-adjusted mortality rates across 3000 US counties. We tested several models and used BIC to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power (CITE). Our initial model included a random intercept for each destination county and random slope for each time covariate. We included random intercepts for each destination county in an attempt to account for some variation between counties, as recommended by Greenland and Morgenstern's assessment of best practices for ecological studies[@greenland1989]. We then iteratively added splines for the prior year's average county-level mortality rate and the migration term. Our initial model is similar to autoregressive county-level mortality models used by [@sparks2010](Sparks and Sparks), (Yang, Jensen, Haran), and (Fielding-Miller, Sundaram, Brouwer).
-
-```{r prepare data, include = FALSE, message = FALSE, warning = FALSE}
+```{r prepare data for aim 2, include = FALSE, message = FALSE, warning = FALSE}
 library(dplyr)
 library(ggplot2)
 load("data_processed/migtree.Rdata") #this dataset is called ppu2 for some reason 
@@ -89,35 +72,35 @@ load("data_processed/migtree.Rdata") #this dataset is called ppu2 for some reaso
 
 
 load("data_processed/migterm.Rdata") # this dataset is called migterm 
-#this contains data for 2011 through 2019 
+# this contains data for 2011 through 2019; it includes the already calcd migterm 
 
 
 
 #need to remove years prior to 2011 due to IRS methodology change 
 netmig = ppu2 %>% filter(year>=1112 & year <= 1819)  %>% 
-  group_by(origid, urbcode) %>% summarise(totmig = sum(pn_mig))
-#totmig = the total number of years that an origid had net migration between 1011 and 1819 (ie 9 unique time periods)
+  group_by(origid, urbcode) %>% summarize(netmig = sum(pn_mig))
+#netmig = the total number of years that an origid had net migration between 1112 and 1819 (ie 9 unique time periods)
 
 
 #need to remove years prior to 2011 due to IRS methodology change 
 migterm = migterm %>% filter(lagyear >=2011)
-
+# 
 netmigterm = merge(migterm, netmig, by.x = "destid", by.y = "origid", all.x = TRUE)
 #there are 22 obs lost during this merge (5 unique destids) 
 #these are the result of fipscodes changes - they can be corrected later; ignoring for now since it's already impossible to have a perfect 3142 county dataset 
 netmigterm = netmigterm[!is.na(netmigterm$urbcode),] 
 netmigterm = netmigterm[!is.na(netmigterm$migterm),] #none lost during this step 
-netmigterm = netmigterm[!is.na(netmigterm$totmig),] #none lost during this step 
+netmigterm = netmigterm[!is.na(netmigterm$netmig),] #none lost during this step 
 
-summary(netmigterm$totmig)
+#summary(netmigterm$totmig)
 
 
-# WITHOUT RACE - TOTAL COUNTY VALUES ONLY 
 
 library(splines)
 library(lme4)
+library(tidyverse)
 
-migmodm = netmigterm %>% arrange(year) %>% 
+migmodm = netmigterm %>% arrange(lagyear) %>% 
   group_by(destid) %>% 
   filter(n_distinct(totrate_d1)>4)
 
@@ -147,63 +130,421 @@ mnn$ft = as.factor(mnn$t)
 mmig = lme4::lmer(totrate_d1 ~ ft + (1+t|destid) + migterm, data = mnn,
                 control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
+mnet = lme4::lmer(totrate_d1 ~ ft + (1+t|destid) + netmig, data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+mnetf = lme4::lmer(totrate_d1 ~ ft + (1+t|destid) + as.factor(netmig), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
 mnon = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid), data = mnn,
                 control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 mboth = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = mnn,
                 control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
-AIC(mmig, mnon, mboth)
+mthree = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + as.factor(netmig), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+mnetauto = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + as.factor(netmig), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+BIC(mmig, mnon, mboth, mnet, mnetf, mthree, mnetauto)
+
+
+
 ```
 
-To test Hypothesis 2A: county-to-county migration does not occur at random, we compare a model using our weighted average migration term, which represents migration at random, to a model that includes only the prior year's average county-level mortality rate. The full model is shown below:
+```{r spline comparison, include = FALSE, message = FALSE, warning = FALSE}
+
+library(nlme)
+library(lme4)
+library(splines)
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+m1_both = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+m1_nomig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig2 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 2) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig3 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 3) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig4 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 4) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig5 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 5) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig6 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 6) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig7 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 7) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_nomig9 = lme4::lmer(totrate_d1 ~ft + ns(totrate_d0, df = 9) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+BIC(m1_nomig,m1_nomig2, m1_nomig3, m1_nomig4, m1_nomig5, m1_nomig6, m1_nomig7,m1_nomig9) 
+ #lowest BIC is for m1_nomig5 
+
+
+m1_norate = lme4::lmer(totrate_d1 ~ft + migterm + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate2 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 2) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate3 =lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 3) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate4 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 4) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate5 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 5) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate6 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 6) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate7 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 7) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_norate9 = lme4::lmer(totrate_d1 ~ft + ns(migterm, df = 9) + (1+t|destid), data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+BIC(m1_norate, m1_norate2, m1_norate3, m1_norate4, m1_norate5, m1_norate6, m1_norate7,m1_norate9) 
+#lowest BIC is for m1_norate5
+
+
+
+m1_spline1212 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 12) + (1+t|destid) + ns(migterm,df = 12), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline66 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 6) + (1+t|destid) + ns(migterm,df = 6), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline55 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 5) + (1+t|destid) + ns(migterm,df = 5), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline54 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 5) + (1+t|destid) + ns(migterm,df = 4), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline45 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 5), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline33 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_spline22 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 2), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+BIC(m1_spline1212, m1_spline66, m1_spline55, m1_spline54, m1_spline45, m1_spline44, m1_spline33, m1_spline22)
+#lowest BIC is for m1_spline55 
+#when splines are inequal for rate and migterm the BIC increases 
+
+
+BIC(m1_spline55, m1_norate5, m1_nomig5)
+
+
+m1_choice = m1_spline55
+
+```
+
+[Data:]{.underline} To study the relationship between health and migration, we use county-level estimates of age-adjusted mortality available through CDC WONDER[@cdcwond] joined with IRS county-to-county migration flow data[@soitax]. Since death has a clear and common definition, mortality rates are commonly used as a gold standard when comparing various dimensions of health across counties, health systems, cultures, and time periods[@self-rat1997; @olson-williams2023; @jylhä2009]. Additionally, mortality has important policy and health equity implications and can be used to assess which individuals or groups are likely to live longest and which individuals or groups may be most in need of additional care. We chose to use county-level age adjusted mortality data representing the years 2011 through 2019. We excluded the year 2020 from our analyses because across the US, the median county-level mortality rate rose from 713.2 per 100,000 in 2019 to 828.5 per 100,000 in 2020, as shown in Figure 1 <!--# Figure 1 -->. This unprecedented change in mortality is difficult to model since the onset of the pandemic is unrelated to other factors included in our model. Additionally, County Health Rankings and Roadmaps recommends against the comparison of COVID-19 mortality rates with mortality data from prior years[@danewi]. <!--# maybe need a better way to cite this or remove -->IRS migration flow data are available for 1990 through 2019. However, in 2011, the IRS changed their methods to produce migration estimates based on a full year of income tax filings rather than a partial year. Prior to 2011, migration estimates represented between 95 and 98 percent of total annual income tax filings and excluded income taxes filed after September of each calendar year[@pierce2015]; estimates after 2011 include all annual income tax filings collected for each year. Therefore, we have chosen only to include data after the 2011 change in IRS methodology. We have chosen to use IRS rather than ACS estimates of migration for this aim because ACS does not publish single year estimates of migration (only five year estimates), and in this aim, we have chosen to emphasize the temporal aspects of migration, necessitating the use of IRS single year estimates. One final limitation of IRS data (which we are attempting to leverage as a strength in our analyses) is that households that do not file tax returns cannot be included in migration estimates. Therefore, university students, low-income households, and workers who receive informal wages are systematically missing from IRS migration estimates CITE. These individuals may be more likely to be included in ACS and Census estimates [@bureau] (which we use in Aim 3) though no population estimate is perfect. Because IRS county-to-county migration data includes only individuals who file taxes with the US government both before and after they migrate, we assume that individuals represented in the IRS migration flows data are less likely to be pushed to migrate by potentially health-related factors such as violence, famine, and corruption than individuals who migrate but are excluded from the IRS data. Therefore, any differences in changes in health between counties may be the result of self-selection by IRS-represented migrants or health-related selection by nonIRS-represented migrants. Despite these limitations, IRS migration data has been used many times in the past to complete complex and accurate analyses of US migration patterns. For instance, IRS migration flow data has been used to estimate the effects of sea-level rise on geographic distribution of the US population[@hauer2017], measure recovery after Hurricanes Katrina and Rita[@curtis2015], and assess the economic impacts of migration resulting from environmental hazards [@shumway2014].
+
+[Approach]{.underline}: Autoregressive models have commonly been used to estimate mortality rates; for instance, in a 2011 paper, county-level mortality was modeled using spatial autoregressive models in which each county's relative position to other counties as well as its historical mortality rates were considered [@yang2011]. Another similar paper used an autoregressive model with county-level estimates of mortality that were standardized for measures of income and employment, population density and rurality, and race/ethnicity [@sparks2010]. Similarly, early in the COVID-19 pandemic, researchers used a spatial autoregressive model to assess the relationships between county-level COVID-19 mortality rates and county-level sociodemographic characteristics [@fielding-miller2020]. This method has also been extended to age-group and country-level data to explain cohort effects within countries[@li2017b]. Finally, a 2021 paper adapted this method using age-group data to estimate country-level life expectancy more efficiently, more accurately, and with greater precision for younger populations[@shi2021]. In this aim, we extend previous autoregressive models to account for county interconnectedness. Our **primary outcome of interest is county-level age-adjusted mortality**, which we predict using a combination of lagged county-level mortality and migration. To quantify migration, we compared two different methods. First we develop a novel "migration term" which accounts for the mortality rates of individuals who have moved to a county of interest during a given period, essentially a weighted average of the mortality rates of all the origin counties. This approach requires the assumption that all migration occurs at random - ie the average mortality rate of any group of migrants from a specific origin county is approximately equivalent to the mortality rate of their origin county. We calculated the following for each change in year and for each destination county $i$:
 
 $$ 
-y_{i} = \beta_0 + (\beta_{13} + \upsilon_{13ij})t_{13i} + (\beta_{14} + \upsilon_{14ij})t_{14i} + (\beta_{15} + \upsilon_{15ij})t_{15i}  + (\beta_{16} + \upsilon_{16ij})t_{16i} + (\beta_{17} + \upsilon_{17ij})t_{17i} + (\beta_{18} + \upsilon_{18ij})t_{18i} + (\beta_{19} + \upsilon_{19ij})t_{19i} + \beta_m m_i + \beta_r r_{n-1,i} + \mu_j + \epsilon_{ij}  
-$$ Alternatively we can write this as $$ 
-y_{i} = \beta_0 + \sum_{n=12}^{19}{{(\beta_n + \upsilon_{nij})t_{ni} }}+ \beta_m m_i + \beta_r r_{n-1,i} + \mu_j + \epsilon_{ij}  
-$$
-
-$$ 
-y_{it} = \beta_0 + \beta_{13i}t_{13} + \beta_{14i}t_{14} + \beta_{15i}t_{15}  + \beta_{16i}t_{16} + \beta_{17i}t_{17} + \beta_{18i}t_{18} + \beta_{19i}t_{19} + \beta_m m_i + \beta_r r_{n-1,i} + \mu_{it} + \epsilon_{ij}  
+mig_{it} = \frac{ \sum_{j=1}^{k} out_j rate_{j,t-1} + rate_{i,t-1} (pop_{i, t-1} - out_i)}{ \sum_{j=1}^{k}  out_j + (pop_{i,t-1} - out_i)}
 $$
 
 where\
-$y_{ij}$ represents the predicted age-adjusted mortality rate of each county $i$\
-$\beta_{ni}$ are estimated differences in the age-adjusted mortality rate of each county $i$ at year $t_{n}$ compared to year 2012\
-$m_i$ is the weighted average migration term for each county $i$ **AT YEAR ???**\
-$r_{n-1,i}$ is the lagged age-adjusted mortality rate for each county $i$ at year $n-1$ \
-$\mu_i$ is a random intercept for each county $i$ and\
-$\upsilon_{nij}$ is a random slope for the effect of each year $n$ on each county $i$\
+$out_j$ represents the number of migrants from a unique origin county $j$ who migrated to a destination county $i$ between year $t-1$ and year $t$.\
+$rate_{j,t-1}$ is the mortality rate of an unique origin county $j$ at initial year $t-1$\
+$rate_{i, t-1}$ is the mortality rate of an unique destination county $i$ at initial year $t-1$\
+$pop_{i, t-1}$ is the population of an unique destination county $i$ at initial year $t-1$\
+$out_i$ is the number of migrants who left each unique destination county $i$ between year $t-1$ and year $t$.
 
-or Alternatively, we could specify this like Sparks and Sparks with a big matrix of coeffs Y = XBeta + e
+Second, we calculate a "net migration" term which is essentially the sum of the total number of years between 2011 and 2019 that a county experienced positive net migration minus the total number of years that a county experienced negative net migration. Therefore, as we can see from the following equation, the maximum of the net migration term for each county $i$ is 8 while the minimum is -8. In our regression models, we treat the net migration term as a factor variable, since we have reason to believe that the ordinal relationship between each potential net migration value is less meaningful than the value itself.
 
-need to put upsilon elsewhere since there is only 1 time (continuous)
+$$
+\begin{equation}
+ netmig_i = \sum_{t=2011}^{2019} 
+   \left\{\begin{array}{lr}
+       1, & in_{i,t} \ge out_{i,t} \\
+       -1, & in_{i,t} < out_{i,t} 
+    \end{array}\right.
+ \end{equation}
+$$
 
-the other ts need to be binary
+where
 
-i propose:
+$in_{i,t}$ represents the total number of migrants entering destination county $i$ in year $t$
 
-a multilevel model: first we develop a county-specific relationship between mortality and migration then we use this modelled migration-mort term in an autoregressive model which may or may not need "time" as a factor variable
+$out_{i,t}$ represents the total number of migrants leaving destination county $i$ in year $t$
 
-OR at the very least, it seems maybe the migterm should have the random slope instead of each time factor??
+To simplify things, we have chosen to focus on the effects of migration to a destination rather than away from an origin. Therefore, we complete all analyses from the perspective of a "destination" county. This means that counties which are destinations for migration (ie counties that have no origin counties) are excluded from our analyses. Additionally since we are particularly interested in temporal trends in mortality, we exclude counties for which there are not at least four years of mortality data available. Unfortunately, this means that our analyses excludes many rural and low population counties. There are `r length(unique(mnn$destid))` total US counties included in our analyses. In Figure 2 <!--# figure 2 --> we see the rurality codes and population size of the counties included in our analyses compared to the rurality codes and population sizes of the counties excluded from our analyses.
 
-I want to redo these modelling decisions and instead create multilevel models similar to sparks and sparks (https://doi-org.ezproxy.library.wisc.edu/10.1002/psp.564): first we develop a county-specific relationship between mortality and migration, then we use this modelled migration-mort term in an autoregressive model which may or may not need "time" as a factor variable At the very least, it seems maybe the migterm should have the random slope instead of each time factor??
+To test Hypothesis 2A: County-to-county migration patterns improve the predictability of autoregressive models of county-level measures of health, we used autoregressive models to explain county age-adjusted mortality rates across US counties for which at least four years of mortality and migration data are available. We tested several models and used the Bayesian Information Criterion (BIC) to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power CITE. Our initial model included a random intercept for each destination county and random slope for each time covariate. We included random intercepts for each destination county to account for variation between counties, as recommended by Greenland and Morgenstern's assessment of best practices for ecological studies[@greenland1989]. We then iteratively added splines for the prior year's average county-level mortality rate and the migration term. Our initial model is similar to simple autoregressive county-level mortality models used in the past [@sparks2010; @yang2011; @fielding-miller2020 @yang2012]. <!--# read these more carefully!!! and add details about dem covars --> We established our initial model by iteratively comparing a series of autoregressive models, including and excluding our migration term and net migration term. The initial model (without splines) is shown below:
 
-I think we need a spatial autoregressive term (moran's I) - then we can show that the relationship between migration and mortality is not just residual spatial correlation / we can show that spatial correlation is actually migration (seems like maybe something similar could have been done before but I have not yet found it)
+$$ 
+y_{it} = \beta_0 + \beta_{13}t_{13i} + \beta_{14}t_{14i} + \beta_{15}t_{15i}  + \beta_{16}t_{16i} + \beta_{17}t_{17i} + \beta_{18}t_{18i} + \beta_{19}t_{19i} + \beta_{mig} mig_{it} + \beta_{net, -6} net_{-6,i} + \beta_{net, -4} net_{-4,i} + \beta_{net, -2} net_{-2,i} + \beta_{net, 0} net_{0,i} + \beta_{net, 2} net_{2,i} + \beta_{net, 4} net_{4,i} + \beta_{net, 6} net_{6,i} + \beta_{net, 8} net_{8,i}+ \beta_r r_{t-1,i} + \upsilon_{i}t + \mu_{it} + \epsilon_{ij}   
+$$
 
-Referencing https://www.econometrics-with-r.org/10-4-regression-with-time-fixed-effects.html:
+where\
+$y_{it}$ represents the predicted age-adjusted mortality rate of each destination county $i$ at year $t$.\
+$t_{yi}$ are binary factor variables for each year of available data $y$. Each $\beta_y$ coefficient represents the estimated difference in the age-adjusted mortality rate of each destination county $i$ at year $y$ compared to year 2012.\
+$mig_{it}$ is the weighted average migration term for each destination county $i$ at year $t$.
 
-time as a factor is useful when we want to control for variables that are consta
+$net_{ni}$ are binary factor variables for each potential value $n$ of $netmig_i$. Each $\beta_{net,n}$ coefficient represents the estimated difference in the age-adjusted mortality rate of each destination county $i$ for $netmig_i$ value $n$ compared to $netmig_i$ value -8.\
+$r_{t-1,i}$ is the lagged age-adjusted mortality rate for each destination county $i$ at year $t-1$.\
+$\mu_{it}$ is a random intercept for each destination county $i$ at time $t$.\
+$\upsilon_{i}$ is a random slope for the effect of time $t$ on each county $i$.\
 
-This could change everything subsequent...... not sure about time constraints - keep pushing with previous models despite reservations? cannot remember the rationale behind treating time as a factor variable
+<!--# would it be better to write t and netmig as "FACTOR" instead of writing out each coeff???? seems messy and also looks incorrect / overfit!!! -->
 
-To test Hypothesis 2B: County-to-county migration patterns improve the predictability of autoregressive models of county-level measures of health, we compare a series of autoregressive models, including terms for several different methods of measuring migration.
+The above model, which includes both the migration term and the net migration term as well as the autoregressive mortality rate, has the lowest BIC score when compared to similar models which iteratively exclude the migration term, the net migration term, and the autoregressive mortality rate. This confirms our hypothesis 2A - county-to-county migration patterns do improve the explainability of autoregressive models of county-level mortality.
 
-Finally, to test Hypothesis 2C: The effect of intercounty migration on county-level health differs significantly between rural and urban counties, we add rural/urban terms to the models used to test Hypothesis 2B.
+To further confirm this hypothesis, we add splines for both mortality and migration. Since we suspect that the relationship between migration and mortality is nonlinear CITE, we want to confirm that the migration term improves explainability of autoregressive models after accounting for nonlinear trends. We compared models with splines of 2, 3, 4, 5, 6 degrees of freedom for each of the migration term and the autoregressive term and found that the model with the most explanatory power included splines with five degrees of freedom for both the migration term and the autoregressive term. We will refer to this model as $mod2A$.
 
-[Results and future directions:]{.underline} We found that models including our weighted average migration term did not have as much explanatory power as models that included only the prior year's average county-level mortality rate. This suggests that migration does not occur at random - if migration occurred at random, we would expect a weighted average of the expected mortality rates of all potential migrants to be equivalent, if not more predictive, of the future mortality than the prior year's mortality rate. Therefore, Hypothesis 2A holds.
+To determine whether the effect of intercounty migration on county-level health is modified by urbanicity (Hypothesis 2B), we model the relationship between migration and mortality using similar models as those used to test Hypothesis 2A. However, we add an interaction term for urbanicity and migration and compare it to previous models. To measure urbanicity, we assign each county an urbanicity category based on the 2013 National Center for Health Statistics (NCHS) Urban--Rural Classification Scheme for Counties[@rothwell]. These are the same urbanicity codes that were used in Aim 1. Within our dataset of migration destinations, the six categories are as follows: large central metro (n = 68), large fringe metro (n = 367), medium metro (n = 369), small metro (n = 350), micropolitan (n = 626), and noncore (n = 937). We find that a model including interaction terms for urbanicity (as a factor variable) has a lower BIC score than models which do not include interaction terms between the migration term and urbanicity. This suggests that the relationship between migration and health differs between rural and urban counties.
 
-When we included the prior year's average county-level mortality rate in addition to our weighted average migration term, our model had greater explanatory power than a model including only the prior year's mortality rate.
+```{r addition of urb for aim 2b, include = FALSE, message = FALSE, warning = FALSE}
+m1_urb = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + totmig, data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*totmig + totmig, data = mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_urbi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + migterm*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+m1_urbmig = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totmig, 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+m1_urbmorti = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totrate_d0*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+m1_urbmortmigi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + factor(urbcode) + totrate_d0*factor(urbcode) +migterm*factor(urbcode), 
+                    data = mnn,
+                    control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline55urb = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 5) + (1+t|destid) + ns(migterm,df = 5)*factor(urbcode), data = mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+# m1_spline55urbmort = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 5)*factor(urbcode) + (1+t|destid) + ns(migterm,df = 5)*factor(urbcode), data = mnn,
+#                 control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+#not sure what to do here.... this model has the LOWEST BIC (lower than m1_spline55urb) but it's kinda a mess and technically our hypothesis didn't test this... ignoring for now since m1spline55urb is still relevant 
+
+
+BIC(mboth, m1_choice, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi, m1_spline55urb)
+```
+
+```{r addition of urb for aim 2b, include = FALSE, message = FALSE, warning = FALSE}
+
+urbbin = haven::read_sas("data_raw/nchs_urbanicity_wlabels.sas7bdat") %>% select(fipscode, statecode, countycode, rural)
+#load binary rural/urban code (coped from CHRR Pdrive folder 2) 
+
+#merge with the migterm data 
+
+migbin = merge(mnn, urbbin, by.x = "destid", by.y = "fipscode", all.x = TRUE)
+
+rural = migbin %>% filter(rural == 1) 
+urban = migbin %>% filter(rural == 0)
+```
+
+To investigate further, we split our dataset in two: one dataset containing all rural counties and a second containing all urban counties. We define rural by grouping the NCHS definitions of micropolitan and noncore such that there are `r length(unique(rural$destid))` counties in our rural dataset. We define urban by grouping the NCHS definitions of large central metro, large fringe metro, medium metro, and small metro such that there are `r length(unique(urban$destid))` counties in our urban dataset CITE. This is inline with the County Health Rankings and Roadmaps rurality definitions CITE. We then completed the same model selection steps as above, this time using separate datasets for rural counties and urban counties.
+
+```{r separate rural aim 2b, include = FALSE, message = FALSE, warning = FALSE}
+library(splines)
+library(lme4)
+
+rural_migmodm = rural %>% arrange(year) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+rural_mn = data.frame(rural_migmodm)
+
+rural_mnn = rural_mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+rural_mnn$ft = as.factor(rural_mnn$t)
+
+# i rescaled these vars once to confirm that the results were unchanged by the "Warning: Some predictor variables are on very different scales: consider rescaling" message 
+# bic values were slightly different using standardized values, but their pattern/relative order did not change 
+# mnn$totrate_d0 = scale(mnn$totrate_d0)
+# mnn$migterm = scale(mnn$migterm)
+# mnn$totmig = scale(mnn$totmig) 
+
+
+
+
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+
+m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline32 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 2), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline23 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 3), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline22 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 2), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + netmig, data = rural_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*netmig + netmig, data = rural_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+############################################################
+#including the netmig term below 
+m1n = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + as.factor(netmig), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44n = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4) + as.factor(netmig), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33n = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3) + as.factor(netmig), data = rural_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigin = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*as.factor(netmig), data = rural_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+
+
+
+
+ruralbic = BIC(m1, m1_spline44, m1_spline33, m1_spline32, m1_spline23, m1_spline22, m1_totmig, m1_totmigi, m1n, m1_spline44n, m1_spline33n, m1_totmigin)
+
+
+rurmod = get(rownames(ruralbic[ruralbic$BIC == min(ruralbic$BIC),]))
+```
+
+```{r urb only for aim 2b, include = FALSE, message = FALSE, warning = FALSE}}
+library(splines)
+library(lme4)
+
+urban_migmodm = urban %>% arrange(year) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+urban_mn = data.frame(urban_migmodm)
+
+urban_mnn = urban_mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+urban_mnn$ft = as.factor(urban_mnn$t)
+
+
+#(1|fips) is a random intercept; each fips's reg line is shifted up/down randomly with mean 0
+#(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline32 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 2), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline23 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 3), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline22 = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 2) + (1+t|destid) + ns(migterm,df = 2), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmig = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + netmig, data = urban_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigi = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*netmig, data = urban_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+############################################################
+#including the netmig term below 
+m1n = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm + as.factor(netmig), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_spline44n = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 4) + (1+t|destid) + ns(migterm,df = 4) + as.factor(netmig), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))) #this is the lowest BIC model from the previous markdown 
+
+m1_spline33n = lme4::lmer(totrate_d1 ~ ft + ns(totrate_d0,df = 3) + (1+t|destid) + ns(migterm,df = 3) + as.factor(netmig), data = urban_mnn,
+                control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+m1_totmigin = lme4::lmer(totrate_d1 ~ft + totrate_d0 + (1+t|destid) + migterm + migterm*as.factor(netmig), data = urban_mnn, 
+                     control=lmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+
+
+
+
+
+urbanbic = BIC(m1, m1_spline44, m1_spline33, m1_spline32, m1_spline23, m1_spline22, m1_totmig, m1_totmigi, m1n, m1_spline44n, m1_spline33n, m1_totmigin)
+
+
+
+
+
+
+
+urbmod = get(rownames(urbanbic[urbanbic$BIC == min(urbanbic$BIC),]))
+
+
+
+```
+
+We found that for both urban and rural counties, the models with the lowest BIC scores included splines with four degrees of freedom each for the migration term and lagged age-adjusted mortality as well as the net migration term factor variable. These models were very similar to $model2A$ but with four degree of freedom splines instead of five. Though the models for urban and rural counties are similar, there appear to be some interesting things happening between rural and urban counties. See Figure 3 below. <!--# figure 3!!!! -->
+
+Migration from healthy places (ie when migterm = -10; red) appears to affect the predicted rate of rural counties more than urban counties. Among rural counties, the migterm does not appear to affect counties at either end of the extremes for initial rate. Migration from unhealthy places (ie when migterm = 10; blue) appears to be related to constant predicted mortality rate among urban counties. This makes sense because urban counties are large enough that incoming migration may not significantly affect them. Meanwhile, migration from healthy counties (-10 red) appears to be associated with a somewhat linear relationship between initial and predicted mortality for urban and rural counties. The relationship between initial and predicted is very similar for urban and rural counties that experience migration from healthy counties (-10 red). Meanwhile, the relationship between initial and predicted differs greatly between rural and urban counties that experience migration from unhealthy counties (10 blue). We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. This makes sense because rural counties are more sensitive to migration than urban counties since their population is smaller. Healthy rural counties experiencing healthy migration have predicted mortality rates that are \~850 (constant and approximately average, neither healthy nor unhealthy). Meanwhile, rural counties with initial mortality rate \>850 experiencing unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (healthier).
+
+Finally, to test hypothesis 2C: county-to-county migration does not occur at random, we compare a model using our weighted average migration term, which represents migration at random, to a model that includes only the prior year's average county-level mortality rate. <!--# this needs work!!! YIKES!!!! -->
+
+[Results and future directions:]{.underline}
+
+When we included the prior year's average county-level mortality rate in addition to our weighted average migration term, our model had greater explanatory power than a model including only the prior year's mortality rate and a model including only the weighted average migration term.
+
+We found that models including our weighted average migration term had more explanatory power (i.e. lower BIC scores) than models that included only the prior year's average county-level mortality rate. Therefore, we cannot conclude that migration is not randomly related to age-adjusted mortality. If migration is were non-randomly related to mortality, we would expect a weighted average of the expected mortality rates of all potential migrants to be less predictive of future mortality than the prior year's mortality rate. Therefore, Hypothesis 2C does not hold - county-to-county migration is randomly associated with county-level health. Since our county-level migration flow data does excludes individuals who have not filed US taxes, it is possible that we have systematically excluded the very youngest and the very oldest individuals (ie those who may be most likely to migrate for a health-related reason).
+
+[Pitfalls and Alternatives:]{.underline} Because our migration term is essentially a weighted average of the mortality rates of origin counties, the migration term and lagged mortality rates are highly correlated. We have not yet determined the best method to handle this multicollinearity. Our outcome of interest, county-level age-adjusted mortality, was selected due to scarcity -- county-level measures of health that are comparable across years are few and far between. However, in 2019, the median age of all movers across the USA was under 30 years old [@s0701:g] - therefore, the population that is migrating is unlikely to be the population that is dying. Therefore, trends in county-level mortality might be better explained by trends in county-level migration fifty years earlier. That said, age-adjusted county-level mortality rates are a commonly used proxy for health of a county overall. For instance, a 1983 report by the WHO recommending measures in mortality and morbidity to understand the relationship between health and migration [@gushulak2006], mortality has been used to assess risks of death in SA and moz (collinson), etc etc
+
+Our models do not currently account for spatial autocorrelation, only temporal autocorrelation and migration. Since there are spatial patterns in both migration and mortality data, it is unlikely that any spatial effects can rightly be completely ignored. Future drafts of Aim 2 will include exploration of spatial autocorrelation.
 
 ------------------------------------------------------------------------
+
+[**Aim 3:** Identify counties, time periods, and education groups that experience anomalous county-to-county migration patterns.]{.underline} **Hypothesis 3A:** Migration of low-income individuals to and from rural counties is not part of the core migration system characterizing US internal migration. **Hypothesis 3B:** The average health of counties not in the core migration system is significantly different from the average health of counties in the core migration system. (This aim has not yet been started. We plan to preregister our study plan with OSF before we begin our analyses.)
+
+[Data:]{.underline} We will use county-level five-year estimates of migration data available publicly through the American Community Survey (ACS) to construct our tensor. The ACS updates county-level population estimates annually, and each year's estimate includes data collected from January through December of that year.16 We will use five-year ACS estimates since single year estimates of migration do not include sociodemographic characteristics. Due to concerns about nonresponse bias during the COVID-19 pandemic [@bureaua], we will exclude ACS estimates which include data after 2019. Therefore, we will use ACS 5-year estimates for 2011 through 2019. This is consistent with the years of data we use in Aim 2. Though the ACS 5-year geographic mobility estimates do not include origin-destination pairs, ACS does publish information on the origin of migration and whether individuals moved within the same county, moved within the same state, moved across states, or moved from abroad. We refer to this as "migration type". To assess the sociodemographic aspects of population mobility, we focus on educational attainment. The ACS 5-year datatables include estimates of population mobility for five educational attainment subgroups of the 25 years and older population. These five subgroups include: less than high school graduate, high school graduate (included equivalency), some college or associate's degree, bachelor's degree, and graduate or professional degree. Since educational attainment subgroup data represents only the 25 years and older population, we will include only the 25 years and older population for all dimensions of population mobility included in our model (origin, time period, migration type, and educational attainment).
+
+The relationship between education and health is well established CITE. Additionally, county-level educational attainment-specific estimates of mortality are available through the National Center for Health Statistics. Therefore, assuming that we are able to access the , we anticipate being able to compare a tensor of education specific migration with a tensor of education specific mortality.
+
+[Approach:]{.underline} We will model county-level migration patterns using an extension of the novel method, spatio-temporal tensor co-clustering[@almquist2021]. A tensor can be thought of as an extension of a matrix, where a one-way tensor is a vector, a two-way tensor is a matrix, a three-way tensor is a cube, and a 4-way tensor is a hyperrectangle[@blog]. Our tensor will have the following dimensions: origin county, time period, type of migration, and sociodemographic group. For example, a single entry of our four-way tensor can be represented as $X(a, b, c, d)$: the number of migrants from county $a$ in period $b$ doing migration type $c$ belonging to sociodemographic group $d$. There are many different tensor decomposition methods. Two of the most common decomposition methods are Canonical Polyadic (CP) decomposition and Tucker3 decomposition. CP decomposition performs better than Tucker3 decomposition on sparse data [@schein2015; @kolda2008; @fanaee-t2016]. However, the Tucker3 decomposition method is commonly used when analyzing variability within multiple dimensions[@dong2010]. Since we are interested in quantifying patterns across all dimensions of our tensor, the Tucker3 decomposition method is the best choice. The results of this decomposition will represent the most typical or strongest patterns of migration to destination for sociodemographic groups during specific time periods. In order to identify patterns in our data that do not represent the "typical" we will use a Gini coefficient to rank components of our factor matrices.21 Components with the highest rank (largest Gini coefficient) will represent components that have undergone the most extreme changes in migration over the dimension of interest; i.e. components with the highest rank will represent counties, time periods, and sociodemographic groups with anomalous migration patterns. The Gini coefficient has been used for this purpose by several other studies of migration21,25. To test Hypothesis 3B, we will use a simple two sample t-test to determine whether the self-reported poor mental health days and age-adjusted mortality rates of counties identified in Hypothesis 3A are like counties not identified in Hypothesis 3A. Self-reported poor mental health days and age-adjusted mortality were used in Aims 1 and 2 respectively, so we include them as outcomes of interest with hopes of confirming our findings of Aims 1 and 2.
+
+[Expected results:]{.underline} We expect to see both rural and urban counties represented
+
+[Pitfalls and alternatives:]{.underline} Originally, we proposed the use of IRS data instead of ACS data to assess migration because we aimed to understand county-interconnectedness. However, because IRS and ACS datasets represent different populations, joining IRS county-to-county migration flow data to ACS demographic requires many assumptions. Thus, we have decided to use ACS five-year estimates of demographic mobility. As a result, our analyses will not be applicable to migration as a "system," (i.e. origin and destination pairs) but instead will allow us to better understand how social groups of people migrate across the United States.
+
+ACS does not publish single-year estimates of socioeconomic group population mobility. Therefore, we must use five-year estimates. Five-year estimates provide an imprecise understanding of migration over time; however, they allow for greater representation among small geographies and sociodemographic groups (less missingness due to suppression). Therefore, in this aim, we are unable to fully assess temporal patterns of migration. Instead we prioritize understanding mobility patterns across sociodemographic identity, specifically educational attainment, rather than over time.
+
+[**Overall Summary and Conclusions**]{.underline}
+
+holes in my lit review
+
+-   need to know more about alternative dimension reduction techniques used to study migration and health
+
+-   
