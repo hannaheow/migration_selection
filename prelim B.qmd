@@ -242,7 +242,7 @@ m1_choice = m1_spline55
 
 [Data:]{.underline} To study the relationship between health and migration, we use county-level estimates of age-adjusted mortality available through CDC WONDER[@cdcwond] joined with IRS county-to-county migration flow data[@soitax]. Since death has a clear and common definition, mortality rates are commonly used as a gold standard when comparing various dimensions of health across counties, health systems, cultures, and time periods[@self-rat1997; @olson-williams2023; @jylhä2009]. Additionally, mortality has important policy and health equity implications and can be used to assess which individuals or groups are likely to live longest and which individuals or groups may be most in need of additional care. We chose to use county-level age adjusted mortality data representing the years 2011 through 2019. We excluded the year 2020 from our analyses because across the US, the median county-level mortality rate rose from 713.2 per 100,000 in 2019 to 828.5 per 100,000 in 2020, as shown in **Figure 1**.
 
-```{r figure1, message = FALSE, warning = FALSE}
+```{r figure1, message = FALSE, warning = FALSE, echo = FALSE}
 load("data_processed/22yearsmort_norace.RData")
 #need the original dataset since all others have 2020 removed already 
 #this dataset is called "sc" for some reason lol 
@@ -272,7 +272,9 @@ $rate_{i, t-1}$ is the mortality rate of an unique destination county $i$ at ini
 $pop_{i, t-1}$ is the population of an unique destination county $i$ at initial year $t-1$\
 $out_i$ is the number of migrants who left each unique destination county $i$ between year $t-1$ and year $t$.
 
-Second, we calculate a "net migration" term which is essentially the sum of the total number of years between 2011 and 2019 that a county experienced positive net migration minus the total number of years that a county experienced negative net migration, as shown below.
+<!--# add params to subtract from rate_j,t-1 (a) and add to rate_i,t-1 (b); params depend on urb/rural of i and j ; add column a where has an urb value and a rural value; start with a and b independent - just pick a_urb, a_rur, b_urb, b_rur. what is relationship between a and b?? a and b together should somehow still average to rate_j,t-1 - ie a and b are constrained somewhow, maybe need function to explore their relationship  -->
+
+Second, we calculate a "net migration" term which is essentially the sum of the total number of years between 2012 and 2019 that a county experienced positive net migration minus the total number of years that a county experienced negative net migration, as shown below.
 
 $$
 \begin{equation}
@@ -292,10 +294,10 @@ $out_{i,t}$ represents the total number of migrants leaving destination county $
 
 The net migration term is calculated such that the maximum potential value of $netmig_i$ is 8 while the minimum is -8. In our regression models, we treat the net migration term as a factor variable since we believe that the ordinal relationship between each potential net migration value is less meaningful than the value itself.
 
-To simplify things, we have chosen to focus on the effects of migration to a destination rather than away from an origin. Therefore, we complete all analyses from the perspective of a "destination" county. This means that counties which are destinations for migration (ie counties that have no origin counties) are excluded from our analyses. Additionally since we are particularly interested in temporal trends in mortality, we exclude counties for which there are not at least four years of mortality data available. Unfortunately, this means that our analyses excludes many rural and low population counties. There are `r length(unique(mnn$destid))` total US counties included in our analyses. In **Figure 2** below we see the log-transformed distributions of counties that are excluded and included in our analyses.
+To simplify things, we have chosen to focus on the effects of migration to a destination rather than away from an origin. Therefore, we complete all analyses from the perspective of a "destination" county. This means that counties which are destinations for migration (ie counties that have no origin counties) are excluded from our analyses. Additionally since we are particularly interested in temporal trends in mortality, we exclude counties for which there are not at least four years of mortality data available. Unfortunately, this means that our analyses excludes many rural and low population counties. There are `r length(unique(mnn$destid))` total US counties included in our analyses. In **Figure 2** below we see the log-transformed distributions of counties that are excluded and included in our analyses which indicates that the majority of excluded counties have small population.
 
-```{r figure2, message = FALSE, warning = FALSE}
-
+```{r figure2, message = FALSE, warning = FALSE, echo = FALSE}
+library(tidyverse)
 #tidycensus::load_variables(year = "2019", dataset = "acs1")
 pops = tidycensus::get_acs("county", variables = "B01001A_001")
 pops = pops %>% rename(pop = estimate)
@@ -320,7 +322,7 @@ pd %>% ggplot(aes(fill= included, x = pop)) +
   scale_x_continuous(trans = "pseudo_log", name = "Log transformed county population", breaks = NULL) + scale_fill_discrete(labels = c("Excluded", "Included"), name = "") + 
   ylab(label = "") + theme_bw() + 
  # labs(fill = "Included in our analyses") +  
-  labs(caption = "Figure 2: Log-transformed populations of counties that are included and excluded from our analyses") + 
+  labs(caption = "Figure 2: Log-transformed populations \n of included and excluded counties") + 
   theme(plot.caption = element_text(hjust =0))
   
 
@@ -643,7 +645,90 @@ migtermplot = ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(gr
 
 As shown above, urban counties appear to be less sensitive to the $migterm$ than rural counties. Migration from less healthy places (ie when $migterm - mortrate_{initial} = 10$; orange) appears to affect rural counties more greatly than urban counties. This makes sense because urban counties have greater population size making them resistant to the effects of incoming migration. However, the effect of migration from healthier counties ($migterm - mortrate_{initial} = -10$; green) appears to be similar for rural and urban counties. We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. Healthy rural counties experiencing healthy migration have predicted mortality rates that are approximately constant and average (\~850). Meanwhile, rural counties with initial mortality rate \>850 that experience unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (ie unhealthy rural counties become healthier, regardless of the health of migrants).
 
-<!--# add plot here for netmig factor var!!!! also need to confirm no interactions between netmig, migterm, and autoreg -->
+<!--# need to confirm no interactions between netmig, migterm, and autoreg -->
+
+```{r netmig plot, echo = FALSE, message = FALSE, warning = FALSE}
+   
+
+tempdf_urban = urban_mnn[c(rep(1,14)),]
+
+tempdf_rural = rural_mnn[c(rep(1,14)),] #dummy data - first 14 rows of original dataframe 
+
+tempdf_urban$totrate_d0 = c(seq(600, 1250, by = 50)) #replace with old mortality rates 
+#tempdf$ft = as.factor(c(1:14)) #unnecessary bc we only intend to compare two years and it doesn't matter which two 
+tempdf_rural$totrate_d0 =  c(seq(600, 1250, by = 50))
+
+df_rural= rbind(tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural, tempdf_rural) #need to do it this way bc rep causes errors 
+df_urban= rbind(tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban, tempdf_urban)
+
+
+df_rural$migterm = df_rural$totrate_d0
+df_urban$migterm = df_urban$totrate_d0
+# df_rural$migterm = c(df_rural$totrate_d0[1:28] - 10, 
+#                       df_rural$totrate_d0[29:56] + 10, 
+#                       df_rural$totrate_d0[57:84])
+# df_urban$migterm = c(df_urban$totrate_d0[1:28] - 10, 
+#                       df_urban$totrate_d0[29:56] + 10, 
+#                       df_urban$totrate_d0[57:84]) #vary the migterm based on mortrate by 10
+# 
+
+
+df_urban$group = c(rep(-8, 14), rep(-6, 14), rep(-2, 14), rep(0, 14), rep(2, 14), rep(4, 14), rep(6, 14), rep(8, 14))
+df_rural$group = c(rep(-8, 14), rep(-6, 14), rep(-2, 14), rep(0, 14), rep(2, 14), rep(4, 14), rep(6, 14), rep(8, 14))
+
+df_urban$netmig = df_urban$group
+df_rural$netmig = df_rural$group
+
+plotdata_rural = data.frame()
+plotdata_urban = data.frame()
+#for each variant of migterm, create a predicted value 
+
+for (i in 1:8) {
+  gi = unique(df_rural$group)[i]
+  preddata = predict(rurmod, df_rural[df_rural$group == gi,])
+  pd = data.frame(cbind(x =  seq(600, 1250, by = 50), y = preddata))
+  pd$group = gi
+  plotdata_rural = rbind(plotdata_rural, pd)
+} 
+
+for (i in 1:8) {
+  gi = unique(df_urban$group)[i]
+  preddata = predict(urbmod, df_urban[df_urban$group == gi,])
+  pd = data.frame(cbind(x =  seq(600, 1250, by = 50), y = preddata))
+  pd$group = gi
+  plotdata_urban = rbind(plotdata_urban, pd)
+} 
+
+plotdata_urban$type = "urban" 
+plotdata_rural$type = "rural"
+
+plotdata = rbind(plotdata_urban, plotdata_rural)
+plotdata$gg = paste0(plotdata$group, plotdata$type)
+
+
+
+ggplot(plotdata, aes(x= x, y = y, group = gg, color = as.factor(group), shape = as.factor(type), alpha = as.factor(type), linetype = as.factor(type), size = as.factor(type))) + geom_point(alpha = as.factor(plotdata$type)) + 
+  geom_line()+
+  scale_color_manual(name = "Net migration over the past 8 years", values = scales::brewer_pal("seq")(8))+
+  xlab("Potential initial mortality rate") + 
+  ylab("Predicted mortality rate") + 
+  theme_bw() +
+  geom_abline(slope = 1) + 
+  coord_cartesian(ylim=c(700,1000))+
+  annotate("text", x = 930, y = 970, angle = 60, label = "Reference y = x") +  
+  #tune::coord_obs_pred() + 
+  labs(color = "", title = "Relationship between net migration and predicted mortality among rural and urban counties", shape = "Rural or urban", size = "Rural or urban", alpha = "Rural or urban", linetype = "Rural or urban", 
+       caption = "Figure 3: The effect of net migration does not appear to differ substantially between rural and urban counties") + 
+  scale_alpha_discrete(range = c(0.2, 1)) +
+  scale_size_discrete(range = c(0.8, 1.5)) +
+  theme(plot.caption = element_text(hjust =0))
+
+
+```
+
+Despite the fact that net migration adds explanatory power to our model, from Figure 3 above, we see that there do no appear to be substantial rural/urban differences in net migration's effect on predicted mortality.
+
+<!--# need more here if we decide not to exclude -->
 
 [Results and future directions:]{.underline} We found that models including our weighted average migration term had more explanatory power (i.e. lower BIC scores) than models that included only the prior year's average county-level mortality rate. Additionally, inclusion of net migration appears to further increase the explanatory power of our models. Our models showed that the health of rural counties is more affected by migration than the health of urban counties, in general. <!--# need more????? -->
 
