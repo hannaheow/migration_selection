@@ -1,0 +1,553 @@
+---
+title: "An ecological investigation of county-level migration as a mechanism for place-based health"
+subtitle: "Epidemiology Preliminary B Exam"
+date: "August 1, 2023"
+author: "Hannah Olson-Williams"
+format: 
+  revealjs: 
+    slide-number: true
+    show-slide-number: all
+    theme: simple
+editor: visual
+bibliography: references.bib
+---
+
+# Question
+
+We know that stress, discrimination, etc can accumulate biologically in individuals and across generations leading to adverse health effects [@henry2013; @hobfoll2015].
+
+Can adverse health accumulate in places? Can we develop a model for place-based health as a function of migration patterns?
+
+<!--# we cannot evaluate the modifiability of health thru place without accounting through selection for place -->
+
+## Motivation
+
+![In the visual above, each Alabama county is represented by a line. For each year that net migration is positive, the line curves right. For each year that net migration is negative, the line curves left. The base of the tree represents year 2009 while the tips of the tree branches represent year 2020.](images/treeviz_baldwin_extremepos.png){width="800"}
+
+Interactive available [here.](https://hannaheow.shinyapps.io/migration_treeviz/)
+
+::: notes
+**Is health in counties with consistent negative net migration significantly different from health in counties with consistent positive net migration?**
+
+show examples of
+
+plymouth MA
+
+hampden MA
+
+and nantucket MA
+
+within state
+:::
+
+## Motivation
+
+![In the visual above, each Alabama county is represented by a line. For each year that net migration is positive, the line curves right. For each year that net migration is negative, the line curves left. The base of the tree represents year 2009 while the tips of the tree branches represent year 2020.](images/treeviz_bullock_negnonextreme.png){width="800"}
+
+Interactive available [here.](https://hannaheow.shinyapps.io/migration_treeviz/)
+
+## Prior understanding
+
+::: incremental
+-   Individuals are either *pushed* to migrate due to adverse circumstances OR *pulled* to migrate by the allure of improved circumstances [@lee1966]
+
+-   The relationship between health and place is "mutually reinforcing and reciprocal"[@cummins2007]
+
+-   When barriers between origin and destination are large, migrants are often healthier on average than the people living in the destination [@halliday2008]
+
+-   On average, migrants who move from more resource depleted origins to less resource depleted destinations have better health than the population in their destination while migrants who move from less depleted origins to more depleted destinations have worse health than the population in their destination [@norman2005]
+:::
+
+::: notes
+```         
+push pull means selection is occuring! directionality of health and migration is difficult to parse
+
+cleveland / madison example: my bike habits / behavior was influenced by my location but also I chose to move to madison because it is bike friendly ; therefore, how to we parse the effect of the place from the effect of the people
+
+price county example: my friend moved out of price county and now lives in madison - price county does not have many 20 somethings making it undesireable to future 20 somethings - what happens to a community when its young people (its resources) leave?!
+```
+:::
+
+# Goal
+
+Better characterize and measure the relationship between population migration and population health.
+
+::: notes
+cleveland / madison example: my bike habits / behavior was influenced by my location but also I chose to move to madison because it is bike friendly ; therefore, how to we parse the effect of the place from the effect of the people
+
+price county example: my friend moved out of price county and now lives in madison - price county does not have many 20 somethings making it undesireable to future 20 somethings - what happens to a community when its young people (its resources) leave?!
+:::
+
+# Aims:
+
+::: incremental
+1.  Quantify the associations between place and self-reported mental health at the county level.
+
+2.  Explore how county-level migration can enhance our capacity to understand and explain county-level health.
+
+3.  Identify counties, time periods, and education groups that experience anomalous county-level migration patterns.
+:::
+
+## Aim 1: Hypotheses
+
+*Quantify the associations between place and self-reported mental health at the county level.*
+
+**Hypothesis 1A:** County-level averages in poor mental health days are related to urbanicity after accounting for county-level demographic differences
+
+**Hypothesis 1B:** This relationship can be explained by differences in factors linked to the built environment (e.g. access to exercise, mental health providers, air pollution, violent crime, and severe housing problems).
+
+::: notes
+Hypothesis 1C: The way in which factors linked to the bulit environment explain the connection between urbanicity and mental health varies between the most rural and the the most urban counties.
+:::
+
+## ***Note:***
+
+Aim 1 is complete, and findings have been published in the Community Mental Health Journal, available [here](https://doi.org/10.1007%2Fs10597-022-01082-x).
+
+## Aim 1: Data
+
+All data come from the County Health Rankings and Roadmaps 2021 dataset
+
+**Outcome:** self-reported poor mental health days from the Behavioral Risk Factor Surveillance System (BRFSS)
+
+**Exposure:** urbanicity, as defined by the National Center for Health Statistics (NCHS)
+
+**Controls:** sociodemographic makeup of each county
+
+![](images/urbtable1.png)
+
+# Aim 1: Approach
+
+![](images/aim1_dag.png)
+
+## Aim 1: Hypothesis 1A Approach
+
+###### *County-level averages in poor mental health days are related to urbanicity after accounting for county-level demographic differences*
+
+::: incremental
+1.  Calculate propensity scores
+
+    ###### Logistic regression to calculate the propensity of belonging to a given urbanicity category conditional on confounding variables (education, income, percent Black, percent Hispanic, age) relative to reference category (small metro)
+:::
+
+###### 
+
+::: incremental
+2.  Calculate relative change in poor mental health days
+
+    ###### Mixed effects linear regression model with random effect for state (with inverse probability weights)
+:::
+
+###### 
+
+## Aim 1: Hypothesis 2A Approach
+
+*The relationship between urbanicity and mental health can be explained by differences in factors linked to the built environment*
+
+We investigated 8 potential mediating factors:
+
+![](images/urbmediators.png)
+
+## Aim 1: Hypothesis 2A Approach
+
+###### *The relationship between urbanicity and mental health can be explained by differences in factors linked to the built environment*
+
+###### Mediation analysis in two steps [@imai2010; @vanderweele2007]:
+
+::: incremental
+-   Mentally unhealthy days \~ mediator + urbanicity 
+-   Mediator \~ urbanicity 
+-   Estimate of mediation: effect of urbanicity on mediator \* effect of mediator on mentally unhealthy days 
+:::
+
+::: notes
+1.  poor mental health days was the dependent variable, urbanicity was an independent variable, state was a random effect, and IPW was used to adjust for control variables.
+2.  we summed the total mediation effect to estimate the total mediation effect of the built environment
+:::
+
+## **Aim 1: Results**
+
+::: incremental
+-   Controlling for state, age, income, education, and race/ethnicity, large central metro counties reported 0.24 fewer average poor mental health days than small metro counties (*t* = − 5.78, *df* = 423, *p* \< .001).
+-   Noncore counties had 0.07 more average poor mental health days than small metro counties (*t* = 3.06, *df* = 1690, p = 0.002).
+-   Better mental health in large central metro counties was partly mediated by differences in the built environment, such as better food environments. Poorer mental health in noncore counties was not mediated by considered mediators.
+:::
+
+## Aim 1: Pitfalls and Alternatives
+
+::: incremental
+-   BRFSS data is modeled at the state level
+
+-   We are using race and ethnicity as proxies for lived experiences that may differ by identity due to systemic injustices[@crear-perry2020]
+
+-   Model dependent
+
+-   Our findings are statistically significant but not clinically or biologically significant
+
+-   County-level ecological analyses.... Which matters more: geography or population?
+:::
+
+::: notes
+what we really want to know is: how much does lived experience in urbanicity places affect mental health - we know that race is related to many of these experiences but there are a bunch of other mechanisms which happen to be related to race due to systematic differences (slavery, jim crow, GI bill, redlining, etc)
+:::
+
+## Aim 2: Hypotheses
+
+###### *Explore how county-level migration can enhance our capacity to understand and explain county-level health.*
+
+**Hypothesis 2A:** County-to-county migration patterns improve the explainability of autoregressive models of county-level mortality.
+
+**Hypothesis 2B:** The role that intercounty migration plays in county-level mortality differs significantly between rural and urban counties.
+
+**Hypothesis 2C:** Taking into account bias in migration patterns improves our ability to explain county-level mortality as well as the differential role that migration plays in urban versus rural counties.
+
+## Aim 2: Data
+
+**Outcome:** county-level age-adjusted mortality from CDC WONDER for 2011 through 2019
+
+**Primary explanatory factor:** county-level IRS migration flow from 2011 through 2019
+
+**Secondary explanatory factor:** urbanicity as defined by the NCHS (same as Aim 1), grouped into urban (n=1155) and rural (n=1612)
+
+## Aim 2: Data
+
+All analyses are from the perspective of a destination county of migration. Counties are included in our analyses if they:
+
+-   Are a migration destination
+
+-   Have at least 4 years of mortality data available
+
+There are a total of 2767 US counties included in our analyses
+
+```{r figure1, message = FALSE, warning = FALSE, echo = FALSE, results = "hide", fig.keep = "all"}
+
+library(tidyverse)
+load("data_processed/migtree.Rdata") #this dataset is called ppu2 for some reason 
+#urb codes are here already 
+#this contains data for 12 unique time periods: 0809 through 1920 
+
+
+load("data_processed/migterm.Rdata") # this dataset is called migterm 
+# this contains data for 2011 through 2019; it includes the already calcd migterm 
+
+
+
+#need to remove years prior to 2011 due to IRS methodology change 
+netmig = ppu2 %>% filter(year>=1112 & year <= 1819)  %>% 
+  group_by(origid, urbcode) %>% summarize(netmig = sum(pn_mig))
+#netmig = the total number of years that an origid had net migration between 1112 and 1819 (ie 9 unique time periods)
+
+
+#need to remove years prior to 2011 due to IRS methodology change 
+migterm = migterm %>% filter(lagyear >=2011)
+# 
+netmigterm = merge(migterm, netmig, by.x = "destid", by.y = "origid", all.x = TRUE)
+#there are 22 obs lost during this merge (5 unique destids) 
+#these are the result of fipscodes changes - they can be corrected later; ignoring for now since it's already impossible to have a perfect 3142 county dataset 
+netmigterm = netmigterm[!is.na(netmigterm$urbcode),] 
+netmigterm = netmigterm[!is.na(netmigterm$migterm),] #none lost during this step 
+netmigterm = netmigterm[!is.na(netmigterm$netmig),] #none lost during this step 
+
+
+
+
+
+library(splines)
+library(lme4)
+library(tidyverse)
+
+migmodm = netmigterm %>% arrange(lagyear) %>% 
+  group_by(destid) %>% 
+  filter(n_distinct(totrate_d1)>4)
+
+
+migmtemp = na.omit(migmodm) #no additional NAs removed  
+mn = data.frame(migmodm)
+
+mnn = mn %>% 
+ arrange(year) %>% 
+ group_by(destid) %>% 
+ mutate(t = row_number())
+
+mnn$ft = as.factor(mnn$t)
+
+
+
+
+
+
+#tidycensus::load_variables(year = "2019", dataset = "acs1")
+pops = tidycensus::get_acs("county", variables = "B01001A_001")
+pops = pops %>% rename(pop = estimate)
+
+tottig = tigris::counties(cb = TRUE, year = 2019) 
+
+tp = merge(tottig, pops, by = "GEOID", all.x = TRUE) 
+
+
+inc = tp %>% 
+  filter(GEOID %in% unique(mnn$destid))
+ex = tp %>% 
+  filter(!(GEOID %in% unique(mnn$destid))& STATEFP<60)
+inc$included = TRUE
+ex$included = FALSE 
+
+pd = rbind(inc, ex)
+
+
+pd %>% ggplot(aes(fill= included, x = pop)) +  
+  geom_histogram(binwidth = 0.2, alpha = 0.2) +
+  scale_x_continuous(trans = "pseudo_log", name = "Log transformed county population", breaks = NULL) + scale_fill_discrete(labels = c("Excluded", "Included"), name = "") + 
+  ylab(label = "") + theme_bw() + 
+ # labs(fill = "Included in our analyses") +  
+  labs(caption = "Figure 1: Log-transformed populations \n of included and excluded counties") + 
+  theme(plot.caption = element_text(hjust =0))
+```
+
+## Aim 2: Baseline model
+
+<!--# Baseline temporally autoregressive model for a given urbanicity (without splines) : -->
+
+$$  y_{it} = \beta_0 + \beta_{1}t_{13i} + \beta_{2}t_{14i} + \beta_{3}t_{15i}  + \beta_{4}t_{16i} + \beta_{5}t_{17i} +  $$ $$ \beta_{6}t_{18i} + \beta_{7}t_{19i} + \beta_{8} y_{i, t-1} + \upsilon_{i}t + \mu_{i} + \epsilon_{it}    $$
+
+$y_{it}$ represents the predicted age-adjusted mortality rate of each destination county $i$ at year $t$.
+
+$y_{i, t-1}$ is the auto-regressive term\
+$t_{ni}$ are binary factor variables for each year of available data.\
+$t$ is time, in years, treated continuously.\
+$\mu_{i}$ is a random intercept for each destination county $i$.\
+$\upsilon_{i}$ is a random slope for the effect of time $t$ on each county $i$.\
+$\epsilon_{it}$ represents an error term for each destination county $i$ at year $t$.
+
+::: notes
+$\beta_j$ are unknown regression coefficients.\
+$y_{t-1,i}$ is the lagged age-adjusted mortality rate for each destination county $i$ at year $t-1$.
+
+This is a saturated model (fewer assumptions than unsaturated model since we include a coeff for each data point )
+
+This model doesn't include splines yet - we added those next (iteratively); settled on five df for each migterm and autoreg term
+:::
+
+## Aim 2: Hypothesis 2A Approach
+
+$$  mig_{it} = \frac{ \sum_{j\ne i} out_{jit} y_{j,t-1} + y_{i,t-1} (pop_{i, t-1} - \sum_{j\ne i} out_{ijt})}{ \sum_{j\ne i} out_{jit} + (pop_{i,t-1} - \sum_{j\ne i} out_{ijt})} $$
+
+$y_{it}$ is defined in our baseline model\
+$out_{jit}$ represents the number of migrants from a unique origin county $j$ who migrated to a destination county $i$ between year $t-1$ and year $t$.\
+$pop_{i, t-1}$ is the population of an unique destination county $i$ at initial year $t-1$
+
+**Then we compared models with this term to the baseline model**
+
+::: notes
+We calculated the following for each change in year and for each destination county $i$: .....
+:::
+
+## Aim 2: Hypothesis 2B Approach
+
+###### *The role that intercounty migration plays differs significantly between rural and urban counties*
+
+We created separate datasets for rural and urban counties and then built rural and urban-specific models using the same approach outlined for Hypothesis 2A
+
+## Aim 2: Hypothesis 2C Approach
+
+###### (*in development*)
+
+We will add parameter $k$ to our calculation of $mig_{it}$ to simulate selection for migration.
+
+$$  smig_{it} = \frac{ \sum_{j\ne i} out_{jit} (y_{j,t-1}+k_j) + (y_{i,t-1} +k_i) (pop_{i, t-1} - \sum_{j\ne i} out_{ijt})}{ \sum_{j\ne i} out_{jit} + (pop_{i,t-1} - \sum_{j\ne i} out_{ijt})} $$
+
+When $k<0$ (ie decreased mortality rate), we simulate migration by individuals who are healthier than the average of their origin county.
+
+When $k>0$ (ie increased mortality rate), we simulate migration by individuals who are unhealthier than the average of their origin county. <!--# need to say something about k_i here too...  everything below this comment is currently cut off-->
+
+::: notes
+Since we hypothesize that the effect of migration on county-level health differs for rural and urban counties, we will test the values $k$ separately for rural and urban counties.
+:::
+
+## Aim 2: Hypothesis 2A Preliminary Results
+
+The best fitting model in terms of BIC score included five spline terms for both the autoregressive term and our weighted average migration term. Thus, models that account for migration had more explanatory power than models that included only the prior year's average county-level mortality rate.
+
+**This confirms Hypothesis 2A.**
+
+## Aim 2: Hypothesis 2B Preliminary Results
+
+###### Though the models for urban and rural counties are similar, the effect of $mig_{it}$ appears to differ between rural and urban counties.
+
+![](images/urb_migtermplot.png)
+
+::: notes
+As shown above, urban counties appear to be less sensitive to the $migterm$ than rural counties. Migration from less healthy places (ie when $migterm - mortrate_{initial} = 10$; orange) appears to affect rural counties more greatly than urban counties. This makes sense because urban counties have greater population size making them resistant to the effects of incoming migration. However, the effect of migration from healthier counties ($migterm - mortrate_{initial} = -10$; green) appears to be similar for rural and urban counties. We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. Healthy rural counties experiencing healthy migration have predicted mortality rates that are approximately constant and average (\~850 deaths per 100,000 population). Meanwhile, rural counties with initial mortality rate \>850 deaths per 100,000 population that experience unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (ie unhealthy rural counties become healthier, regardless of the health of migrants).
+:::
+
+## Aim 2: Assumptions
+
+::: incremental
+-   Individuals migrate uniformly (i.e. there is no selection)
+-   Age-adjusted county-level mortality rates are a proxy for county-level overall health
+-   Our baseline model is correct
+:::
+
+## Aim 2: Pitfalls and Alternatives
+
+::: incremental
+1.  Lagged mortality rate $y_{t-1,i}$ and $mig_{it}$ are multicollinear
+
+2.  We have not yet accounted for spatial autocorrelation, only temporal autocorrelation[@lorant2001; @sparks2010]
+
+3.  Age-adjusted county-level mortality may not be an appropriate proxy for county-level overall health[@roubal2021]
+
+4.  Does net migration matter?
+
+5.  IRS migration flow data only includes individuals and households that have filed taxes.[@pierce2015]
+
+6.  Some rural counties are missing from our analyses
+
+7.  All analyses are from the perspective of "destination" counties
+:::
+
+::: notes
+1.  multicollinearity is inherent to autoregressive methods; we are drawing conclusions about the entire model, not specific coefficients...... additionally, we are comparing a multicollinear weighted average to an autoregressive term (we're making an apples to apples comparison - in both cases independence is violated!)
+2.  we have plans to add Moran's I or some other coefficient to indicate correlation in space
+3.  we selected our outcome of interest, county-level age-adjusted mortality, because it is comparable across years and locations. However, in 2019, the median age of all movers across the US was under 30 years old [@s0701:g] - therefore, the population that is migrating is unlikely to be the same population that is dying. Subsequently, trends in county-level mortality might be better explained by trends in county-level migration fifty years earlier. That said, county-level measures of mortality are commonly used as a proxy for county overall health. For instance, a 1983 report by the WHO recommending measures in mortality and morbidity to understand the relationship between health and migration [@gushulak2006], and measures of length of life are allocated 50% weight in the County Health Rankings Model of place-based health outcomes [@explore]. A measure of years of potential life lost before age 75 (YPLL) captures preventable and premature deaths, making it more relevant to the migrating population than age-adjusted mortality. However, it may be less straightforward to interpret[@roubal2021]. Therefore, we plan to confirm our preliminary findings using YPLL as well as age-adjusted mortality. Ideally we would use a more precise age-group-specific measure of mortality paired with an age-group-specific measure of migration; however, this would require a migration data source other than the IRS migration flow data which we use here. Additionally, ideally, we would confirm our findings by assessing the health of migrants themselves. This task would require individual longitudinal data. This is not currently within the scope of these aims.
+4.  We have plans to explore incorporation of a categorical variable for the sum of the total number of years between 2011 and 2019 that a county experienced positive net migration minus the total number of years that a county experienced negative net migration.
+5.  Therefore, university students, low-income households, and workers who receive informal wages are systematically missing from IRS migration estimates[@dewaard2022]. These individuals may be more likely to be included in ACS and Census estimates [@bureau] (which we use in Aim 3) though no population estimate is perfect. Because IRS county-to-county migration data includes only individuals who file taxes with the US government both before and after they migrate, we assume that individuals represented in the IRS migration flows data are less likely to be pushed to migrate by potentially health-related factors such as violence, famine, and corruption than individuals who migrate but are excluded from the IRS data. Therefore, any differences in changes in health between counties may be the result of self-selection by IRS-represented migrants or health-related selection by nonIRS-represented migrants. Despite these limitations, IRS migration data has been used many times in the past to complete complex and accurate analyses of US migration patterns. For instance, IRS migration flow data has been used to estimate the effects of sea-level rise on geographic distribution of the US population[@hauer2017], measure recovery after Hurricanes Katrina and Rita[@curtis2015], and assess the economic impacts of migration resulting from environmental hazards [@shumway2014].
+6.  ""
+7.  could we complete similar analyses with emphasis on the places that individuals leave instead?
+:::
+
+## Aim 3: Hypotheses
+
+*Identify counties, time periods, and education groups that experience anomalous county-to-county migration patterns using tensor factorization.*
+
+**Hypothesis 3A:** Components of our tensor of population mobility that are missing from the core migration system will describe migrants with less than high school education.
+
+**Hypothesis 3B:** The average health of counties not in the core migration system is significantly different from the average health of counties in the core migration system.
+
+(*Data manipulation and analysis for this aim has not yet been started. We plan to preregister our study plan with OSF before we begin our analyses.*)
+
+## Aim 3: Data
+
+American Community Survey (ACS) five-year estimates of migration
+
+**Origin:** All US counties
+
+**Migration type:** moved within the same county, moved within the same state, moved across states, or moved from abroad
+
+**Education:** less than high school graduate, high school graduate (including equivalency), some college or associate's degree, bachelor's degree, and graduate or professional degree
+
+**Time Period:** 2008-2012 through 2015-2019 (8 total periods of migration)
+
+## Aim 3: Approach
+
+*Spatio-temporal co-clustering via tensor factorization*
+
+A tensor can be thought of as an extension of a matrix, where a one-way tensor is a vector, a two-way tensor is a matrix, a three-way tensor is a cube, and a 4-way tensor is a hyper-rectangle
+
+A single entry of our four-way tensor $X$ can be written as
+
+$$X(a_i, b_j, c_k, d_n) $$
+
+to represent the number of migrants from origin $i$ in period $j$ doing migration type $k$ belonging to educational attainment group $n$. [@almquist2021]
+
+::: notes
+in the above, ai, bj, ck, dn represent the indices of a single value
+
+Our four-way tensor $X$ can be further described as:
+
+$$  X \approx \sum_{f=1}^{F} a_f \bullet b_f \bullet c_f \bullet d_f  $$
+
+where $a_f \bullet b_f \bullet c_f \bullet d_f$ represents the $fth$ co-cluster migration system such that $a_f$ is the degree of association of the all county origins with co-cluster $f$. Therefore, it follows that if $a_i(f) = 0$ we know that origin $i$ is not in the $fth$ migration system. On the other hand, if $a_i(f)$ is large, we can infer that the $fth$ migration system has lots of migration activity from origin $i$. This is a direct extension of the decomposition of a three-way tensor described in Almquist et al, 2021[@almquist2021].
+:::
+
+## Aim 3: Hypothesis 3A Approach
+
+###### Components of our tensor of population mobility that are missing from the core migration system will describe migrants with less than high school education.
+
+::: incremental
+1.  Decompose our tensor using the Canonical Polyadic (CP) decomposition algorithm
+
+    ###### This will represent the "strongest" or most typical patterns of migration [@schein2015a]
+
+2.  Calculate Gini coefficients of each component of the remaining factor matrices.
+
+    ###### Components with the largest Gini coefficients represent the most extreme or anomalous migration patterns across a dimension of interest. [@schein2015a; @nguyen2017a]
+
+    <!--# need to do more reading here!!! not fully understanding yet.... -->
+
+    <!--# international relations example  -->
+:::
+
+::: notes
+The results of this decomposition will represent the most typical or strongest patterns of migration to destination for sociodemographic groups during specific time periods. In order to identify patterns in our data that do not represent the "typical" we will use a Gini coefficient to rank components of our factor matrices [@schein2015a]. Components with the highest rank (largest Gini coefficient) will represent components that have the most extreme differences across the dimension of interest; i.e. components with the highest rank will represent counties, time periods, migration types, and educational attainment groups with anomalous migration patterns. The Gini coefficient has been used for this purpose by several other studies of migration [@schein2015b; @nguyen2017]. Specifically, to test Hypothesis 3A, we will calculate and rank the Gini coefficient for each component of our tensor to establish the counties, time periods, migration types, and educational attainment groups with the most common and the least common migration patterns.
+:::
+
+## Aim 3: Hypothesis 3B Approach
+
+###### *The average health of counties not in the core migration system is significantly different from the average health of counties in the core migration system.*
+
+We will use a simple two sample t-test to determine whether the self-reported poor mental health days and age-adjusted mortality rates of counties identified in Hypothesis 3A are like counties not identified in Hypothesis 3A.
+
+::: notes
+Self-reported poor mental health days and age-adjusted mortality were used in Aims 1 and 2 respectively, so we include them as outcomes of interest with hopes of confirming our findings of Aims 1 and 2.
+:::
+
+## Aim 3: Expected Results
+
+We expect to see high levels of dissimilarity among migrants with less than high school education because education is a known "pull factor" of migration - it is common for individuals to migrate seeking educational opportunities [@lee; @greenwood1975]. Therefore, individuals with less education are less likely to migrate and therefore less likely to be part of the core migration system.
+
+::: notes
+On the other hand, according to Lee's theory of migration, migration is often bimodal in that only the most advantaged and the least advantaged individuals relocate [@lee]. Therefore, it is possible that our hypothesis will be disproven - perhaps individuals with less than high school education are most likely to be "pushed" out of their counties of origin due to hardship. It will be interesting to see how our method, tensor factorization, might handle this potential bimodality.
+
+Similar logic could be extended to the health distribution of migrants: only the most and least healthy individuals migrate. Though the relationship between education and health is well established and largely considered one-directional [@cutler2006; @cutler2012; @ross1995], as we saw in Aim 2, the relationship between migration, place, and health is more difficult to parse. Because we suspect heterogeneity in the relationship between migration and health across counties, we also expect the health of counties included and excluded from our core tensor to be heterogeneous. Therefore, we expect counties and educational attainment groups in the core migration system to have significantly different health than counties not in the core migration system.
+:::
+
+## Aim 3: Pitfalls and Alternatives
+
+::: incremental
+1.  ACS migration data does not allow us to investigate county-origin pairs
+
+2.  ACS migration data necessitates de-emphasis of temporal patterns
+
+3.  Other dimension reduction techniques may be just as effective as tensor factorization. We have chosen to use tensor factorization because it preserves more data structure than other methods [@allen] and because it is novel.
+:::
+
+::: notes
+Originally, we proposed the use of IRS migration flow data instead of ACS mobility data to assess migration because we thought that the IRS origin-destination pairs for each year could help us understand the effects of county-interconnectedness over time. However, because IRS and ACS datasets represent different populations, joining IRS county-to-county migration flow data to ACS demographic estimates required many assumptions. Thus, we have decided to use ACS five-year estimates of demographic mobility. As a result, our analyses will not be applicable to migration as a "system," (i.e. origin and destination pairs) but instead will allow us to better understand how social groups of people migrate across the United States.
+
+Another downside of the ACS mobility data is that ACS does not publish single-year estimates of county-level socioeconomic group mobility. Therefore, we must use five-year estimates. Five-year estimates provide an imprecise understanding of migration over time; however, they allow for greater representation among small geographies and sociodemographic groups (less missingness due to suppression). Therefore, in this aim, we are unable to fully assess temporal patterns of migration. Instead we prioritize understanding mobility patterns across sociodemographic identity, specifically educational attainment, rather than over time.
+
+There are many possible dimension reduction techniques that we could employ in place of or in addition to tensor factorization. If time, we will attempt to confirm our tensor factorization findings using principle component analysis (PCA) which has been used to study population mobility during the COVID-19 pandemic [@elarde2021], to assess factors related to illegal immigration into Nigeria [@uzomah2020], and to measure urban population movement in China using cell phone data [@sun]. PCA is a top-down approach which systematically discards components that do not explain variance in a dataset, sometimes resulting in loss of structure [@allen]. Meanwhile, our application of tensor factorization will assess dissimilarity within each component to indicate the components that are most meaningful. If implemented correctly, PCA and tensor factorization should yield similar results.
+:::
+
+# Innovation
+
+::: incremental
+-   *Migrationally* autoregressive forecasting of county-level mortality
+
+-   Tensor factorization to assess the sociodemographic dimensions of migration
+:::
+
+# Overall Summary
+
+We cannot fully understand county-level health without first understanding county interconnectedness and how it drives place-based health disparities.
+
+In this proposal we:
+
+::: incremental
+1.  Measure the relationship between place and health at a static time point
+2.  Model the relationship between place, migration, and health over time
+3.  Identify and examine counties with anomalous relationships between place, migration, and health
+:::
+
+::: notes
+We cannot fully understand county-level health without first understanding county interconnectedness and how it drives place-based health disparities. In this proposal, we first measure the relationship between place and health during a static time point, next we model the relationship between place, migration, and health, and finally, we examine counties that have anomalous relationships between place, migration, and health. Recognizing that the United States is heterogeneous and that the mechanisms by which migration may impact health may also be heterogeneous, we attempt to quantify rural-urban disparities in mobility and health at each step. The long-term goal of this work is to contribute to understanding the mechanisms by which mobility may be related to place-based health disparities so that local decision-makers may account for patterns in mobility when creating policy towards improved health for all people in all places. Understanding rural-urban mobility patterns is a necessary first step towards understanding rural-urban health disparities.
+
+The long-term goal of this work is to contribute to understanding the mechanisms by which mobility may be related to place-based health disparities so that local decision-makers may account for patterns in mobility when creating policy towards improved health for all people in all places.
+:::
+
+## References
+
+<!--# need to write up an answer to why not pca; what's the point of tensor factorization -->
+
+<!--# saturated / non saturated model - what is the mortality over time; saturated model: no assumptions, specific average mortality at time 1, specific average mortality at time 2 -->
