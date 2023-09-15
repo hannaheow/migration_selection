@@ -385,8 +385,8 @@ load(&quot;data_processed/migterm.Rdata&quot;) # this dataset is called migterm
 
 
 
-
-netmig = ppu2 %&gt;% filter(year&gt;=1011 &amp; year &lt;= 1819)  %&gt;% 
+#need to remove years prior to 2011 due to IRS methodology change 
+netmig = ppu2 %&gt;% filter(year&gt;=1112 &amp; year &lt;= 1819)  %&gt;% 
   group_by(origid, urbcode) %&gt;% summarise(totmig = sum(pn_mig))</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;origid&#39;. You can override using the
 ## `.groups` argument.</code></pre>
@@ -403,7 +403,7 @@ netmigterm = netmigterm[!is.na(netmigterm$totmig),] #none lost during this step
 
 summary(netmigterm$totmig)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  -9.000  -5.000  -1.000  -0.286   5.000   9.000</code></pre>
+## -8.0000 -6.0000  0.0000 -0.1193  4.0000  8.0000</code></pre>
 <p>Now the modeling</p>
 <p>Similar approach as previous</p>
 <pre class="r"><code># WITHOUT RACE - TOTAL COUNTY VALUES ONLY 
@@ -437,6 +437,14 @@ mnn$ft = as.factor(mnn$t)
 
 #(1|fips) is a random intercept; each fips&#39;s reg line is shifted up/down randomly with mean 0
 #(1+time|fips) includes a random slope for time; the effect of time differs randomly from fips to fips 
+
+
+mmig = lme4::lmer(totrate_d1 ~ ft + (1+t|destid) + migterm, data = mnn,
+                control=lmerControl(optimizer=&quot;bobyqa&quot;,optCtrl=list(maxfun=2e5)))
+
+mnon = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid), data = mnn,
+                control=lmerControl(optimizer=&quot;bobyqa&quot;,optCtrl=list(maxfun=2e5)))
+
 m1 = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migterm, data = mnn,
                 control=lmerControl(optimizer=&quot;bobyqa&quot;,optCtrl=list(maxfun=2e5)))
 
@@ -477,15 +485,17 @@ m1_urbmortmigi = lme4::lmer(totrate_d1 ~ ft + totrate_d0 + (1+t|destid) + migter
 
 
 
-BIC(m1, m1_spline44, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi)</code></pre>
+BIC(mmig, mnon, m1, m1_spline44, m1_urb,m1_urbi, m1_totmig, m1_totmigi, m1_urbmig, m1_urbmorti, m1_urbmortmigi)</code></pre>
 <pre><code>##                df      BIC
+## mmig           14 286910.6
+## mnon           14 286917.7
 ## m1             15 286862.6
 ## m1_spline44    21 286571.6
 ## m1_urb         20 286706.0
 ## m1_urbi        25 286541.6
-## m1_totmig      16 286807.2
-## m1_totmigi     17 286808.9
-## m1_urbmig      21 286672.9
+## m1_totmig      16 286818.2
+## m1_totmigi     17 286817.2
+## m1_urbmig      21 286679.0
 ## m1_urbmorti    25 286543.6
 ## m1_urbmortmigi 30 286546.8</code></pre>
 <p>Based on the above BIC scores, I have chosen to remove the “totmig”
@@ -894,6 +904,8 @@ experiencing healthy migration have predicted mortality rates that are
 unhealthy). Meanwhile, rural counties with initial mortality rate
 &gt;850 experiencing unhealthy migration have predicted mortality rates
 that are lower than their initial mortality rates (healthier).</p>
+<p>More noise in rural = more flat larger rural/urban differences in
+healthy places due to lack of data</p>
 <p>Other things I think would be worth pursuing/considering</p>
 <p>Recent CHRR switch to 9 cat RUCC codes for rurality/urbanicity - are
 there noticable differences in how we are able to measure trends in

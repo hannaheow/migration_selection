@@ -1,0 +1,93 @@
+---
+title: "spatial error model"
+format: html
+editor: visual
+---
+
+Spatial lag model: i believe this is very similar to what we've already done with temporal lag.... the dependent variable in neighboring areas is included - use this when the value of variable in one county directly affects the value in another county (we do not necessarily believe that the health of a county DIRECTLY impacts the health of neighboring county)
+
+Spatial error model: capture spatial autocorr in the error term - use this when omitted spatially correlated vars cause dependence (perhaps by ignoring the presence of highways, commuting zones, etc we are introducing spatial dependence which we can remove using a spatial error model)
+
+Sparks and Sparks tested both spatial lag and spatial error models and concluded that spatial error models better described mortality data - therefore, that's what we'll use too. i see no need to double check this since we do not believe that counties directly affect their neighbors, as we would assume with spatial lag) 
+
+Using Queen contiguity because it looks like that's what's used by Sparks and Sparks and also by the county-level examples in this course that I referenced as a baseline before accounting for temporal correlation too https://crd230.github.io/lab8.html#Spatial_error_model 
+
+To account for both space and time, I use the splm package in R. 
+
+First I test the models using a subset of WI data. 
+
+The splm package requires a balanced dataset (ie all destinations must have the same years of available data). This requires throwing out some data :( 
+
+We stick with ML - includes random effects, more about modeling than estimation 
+
+
+```{r, WIonly}
+
+cp = tidycensus::get_acs(geography = "county", year = 2019, variables = c(tpop = "B01003_001"), survey = "acs5", state = "WI", output = "wide", geometry = TRUE)
+
+wisub = mnn %>% filter(substr(destid, 1, 2) == "55")
+
+nyears = wisub_bal %>% group_by(destid) %>% 
+  count()
+
+#there are two counties with 7 years of data only....
+# is it better to remove the two counties or remove the 8th year....
+# easier to remove the two counties because it turns out that they don't have the same 7 years of data 
+
+wisub_bal = wisub %>% group_by(destid) %>% 
+  filter(n()==8)
+
+cpmnn = merge(cp, wisub_bal, by.x = "GEOID", by.y = "destid")
+
+
+spsub= cpmnn %>% select(GEOID, geometry) %>% distinct()
+queen = spdep::poly2nb(spsub, row.names = "GEOID", queen = T)
+queenw = spdep::nb2listw(queen, style = "W", zero.policy = TRUE)
+
+library(splm)
+fm = totrate_d1 ~ ft + totrate_d0 + migterm
+
+
+  
+wmod = splm::spml(formula = fm, data = wisub_bal, model = "random", 
+                  listw = queenw, lag = TRUE)
+
+```
+
+
+
+
+```{r, all counties}
+
+cp = tidycensus::get_acs(geography = "county", year = 2019, variables = c(tpop = "B01003_001"), survey = "acs5", output = "wide", geometry = TRUE)
+
+nyears = mnn %>% group_by(destid) %>% 
+  count()
+
+#there are many counties with fewer than 8 years of data, some with as few as 5 years.... 
+# is it better to remove the counties or remove the years....
+# easier to remove counties because not all counties have the same 5 years of data... 
+#906 observations lost and 145 counties lost 
+
+
+mnn_bal = mnn %>% group_by(destid) %>% 
+  filter(n()==8)
+
+cpmnn = merge(cp, mnn_bal, by.x = "GEOID", by.y = "destid")
+
+
+spsub= cpmnn %>% select(GEOID, geometry) %>% distinct()
+queen = spdep::poly2nb(spsub, row.names = "GEOID", queen = T)
+queenw = spdep::nb2listw(queen, style = "W", zero.policy = TRUE)
+
+library(splm)
+fm = totrate_d1 ~ ft + totrate_d0 + migterm
+
+allmod = splm::spml(formula = fm, data = mnn_bal, model = "random", 
+                  listw = queenw, lag = TRUE)
+
+```
+
+
+
+
