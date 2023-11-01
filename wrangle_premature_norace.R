@@ -64,63 +64,32 @@ for (i in 1:length(years)){
 }
 
 
+inout = inout[inout$destid <57000 & inout$origid <57000,] #removing all values that are for "total" / national migration..from documentation: 
+# Foreign............................................................. 57
+# Total Migration – US and Foreign........................... 96
+# Total Migration – US............................................ 97
+# Total Migration – Foreign...................................... 98
+# Total Migration – Same State..................................97
 
-
-
-#ADD IRS DATA FOR 2008 thru 2011 
-#(still need 1990-2008....many files, very messy) 
-
-#0809, 0910 are saved the same way as the latest datasets, but they have different col names 
-years811 = c("0809", "0910", "1011")
-for (i in 1:length(years811)) {
-  in1 = read.csv(paste0("data_raw/IRSmig0811/countyinflow",years811[i], ".csv"))
-  in1$y2_statefips = stringr::str_pad(in1$State_Code_Dest, 2, pad = "0")
-  in1$y2_countyfips = stringr::str_pad(in1$County_Code_Dest, 3, pad = "0")
-  in1$y1_statefips = stringr::str_pad(in1$State_Code_Origin, 2, pad = "0")
-  in1$y1_countyfips = stringr::str_pad(in1$County_Code_Origin, 3, pad = "0")
-  
-  in1$destid = paste0(in1$y2_statefips, in1$y2_countyfips)
-  in1$origid = paste0(in1$y1_statefips, in1$y1_countyfips)
-  
-  in1 = in1[!(in1$y1_statefips>57 | in1$y1_statefips == 00),]
-  in1 = in1[!(in1$y2_statefips>57 | in1$y2_statefips == 00),]
- 
-  in1sub = in1[,c("destid", "Exmpt_Num", "origid")]
-  
-  in1sub$year = years811[i]
-  in1sub = in1sub %>% rename(n2 = Exmpt_Num)
-  
-  in1sub = in1sub[!endsWith(in1sub$origid, "000"),]
-  
-  
-  inout = rbind(inout,in1sub)
-  
-}
 
 
 inout$year = as.numeric(inout$year)
 
 #only run the following line if want to change final inout file 
-#save(inout, file = "data_processed/12yearsmigfixed.RData")
+#save(inout, file = "data_processed/9yearsmigfixed.RData")
 
 #####################################################################################
-##### 3) calculate changes from year to year ####################################
+##### 3) calculate lags/changes from year to year ####################################
 #################################################################################
 
-# dest_mort_change_norace dataset 
+# dest_mort dataset 
 # First need to determine how much each destination changed from year 0 to year 1. This calculation only requires mortality datafiles.  
 # 
 # For each fipscode (destination) and each change in year I need:    
-# change_totpop_d = totpop_d1 - totpop_d0,   
-# change_totrate_d = totrate_d1 - totrate_d0.   
-#   
-# The dest_mort_change dataset will have the following columns: 
-# -change_totpop_d
-# -change_totrate_d
-# -totpop_d1
-# -totpop_d0
-# -totrate_d1
-# -totrate_d0
+# -pop_d1
+# -pop_d0
+# -agerate_d1
+# -agerate_d0
 # -cyear (formatted like 1617 where 2016 = t0 and 2017 = t1)
 
 library(ggplot2)
@@ -128,27 +97,26 @@ library(stringr)
 #load("data_processed/premature_norace_1119_processed.RData") #the name of this dataset is mort if already loaded in environment 
 
 
-dest_mort_change_norace = mort %>% group_by(fips) %>% 
+dest_mort = mort %>% group_by(fips) %>% 
   mutate(pop_d0 = lag(Population, order_by = Year), 
          rate_d0 = lag(agerate, order_by = Year)) %>% 
   rename(pop_d1 = Population, 
          rate_d1 = agerate,
          year = Year,
-         destid = fips) %>% 
+         destid = fips,
+         deaths_d1 = Deaths) %>% 
   select(year, destid,
          pop_d0, rate_d0,  
-         pop_d1, rate_d1)
+         pop_d1, rate_d1, deaths_d1)
 
-dest_mort_change_norace$cyear = ifelse(dest_mort_change_norace$year == "1999", "NA99", 
-                                       ifelse(dest_mort_change_norace$year == "2000", "9900", 
-                                              paste0(str_pad(as.numeric(substr(dest_mort_change_norace$year,
-                                                                               nchar(dest_mort_change_norace$year)-1,
-                                                                               nchar(dest_mort_change_norace$year))) - 1, width = 2, side = "left", pad = "0"), 
-                                                     str_pad(substr(dest_mort_change_norace$year, nchar(dest_mort_change_norace$year)-1,
-                                                                    nchar(dest_mort_change_norace$year)), width = 2, side = "left", pad = "0"))))
+dest_mort$cyear = ifelse(dest_mort$year == "1999", "NA99", 
+                                       ifelse(dest_mort$year == "2000", "9900", 
+                                              paste0(str_pad(as.numeric(substr(dest_mort$year,
+                                                                               nchar(dest_mort$year)-1,
+                                                                               nchar(dest_mort$year))) - 1, width = 2, side = "left", pad = "0"), 
+                                                     str_pad(substr(dest_mort$year, nchar(dest_mort$year)-1,
+                                                                    nchar(dest_mort$year)), width = 2, side = "left", pad = "0"))))
 
-dest_mort_change_norace$change_pop_d = as.numeric(dest_mort_change_norace$pop_d1) - as.numeric(dest_mort_change_norace$pop_d0)   
-dest_mort_change_norace$change_rate_d = as.numeric(dest_mort_change_norace$rate_d1) - as.numeric(dest_mort_change_norace$rate_d0)   
 
 
 
@@ -157,7 +125,7 @@ dest_mort_change_norace$change_rate_d = as.numeric(dest_mort_change_norace$rate_
 ### 4) Create initial/ origin dataset 
 #################################################################################
 
-# initial_mort_norace dataset
+# initial_mort dataset
 # In a separate dataset, I will collect  all "initial" county and year-specific mortality rates and populations.  
 # 
 # These initial populations and mortality rates will now be considered "origin" mortality rates and populations. These "initial" values will be from "year 0". This dataset will have the following columns: 
@@ -166,7 +134,7 @@ dest_mort_change_norace$change_rate_d = as.numeric(dest_mort_change_norace$rate_
 # -totpop_o
 
 
-initial_mort_norace = mort %>% rename(origid = fips, 
+initial_mort = mort %>% rename(origid = fips, 
                                     year = Year, 
                                     rate_o = agerate, 
                                     pop_o = Population) %>% 
@@ -176,20 +144,18 @@ initial_mort_norace = mort %>% rename(origid = fips,
 ### 5) merge mortality data with migration flow 
 ##################################################################################
 
-# final_mort_norace dataset
-# Then, using IRS inflow/outflow, I will merge **initial_mort_norace** with **dest_mort_change_norace** such that the following columns are present.   
+# final_mort dataset
+# Then, using IRS inflow/outflow, I will merge **initial_mort** with **dest_mort** such that the following columns are present.   
 # -destid
 # -origid
-# -change_totpop_d
-# -totpop_d1
-# -totpop_d0
+# -pop_d1
+# -pop_d0
 # -cyear
-# -totpop_o0
-# -totrate_o0
+# -pop_o0
+# -agerate_o0
 # -totin_d: the total individuals who migrated to destid in year 0 to year 1
 # -out_o: the individuals who migrated to destid from origid in year 0 to year 1 
 # -totout_d: the total individuals who migrated out of destid in year 0 to year 1
-# 
 
 
 #first some manipulations of irs columns and creation of total inflow and outflow columns 
@@ -207,43 +173,31 @@ outo = inout %>% group_by(origid, year) %>%
 
 inouto = merge(inout, outo, by.x = c("destid", "year"), by.y = c("origid", "year"))
 
-# inouto[inouto$destid == "55025" & inouto$origid == "55099",]
-# inouto[inouto$origid == "55025" & inouto$destid == "55099",]
+inouto[inouto$destid == "55025" & inouto$origid == "55079",] #mke to dane 
+inouto[inouto$origid == "55025" & inouto$destid == "55079",] #dane to mke 
+#in the datasets above, the totin is the total number of migrants to destid in year 
+# and totout is the total number of migrants out of destid in year 
+# n2 represents the flow from origid to destid (ie the proportion of the totin that is from that origid)
+# i can't think of an efficient way to check this...but it appears correct at a glance 
 
-#first add the dest_mort_change dataset to the inout dataset 
-inoutd_norace = merge(inouto, dest_mort_change_norace, by.x = c("destid", "year"), by.y = c("destid", "cyear"))
-inoutd_norace = inoutd_norace %>% rename(cyear = year, 
-                                         year = year.y)
-inoutd_norace$lagyear = inoutd_norace$year - 1 #this is the "initial" / time 0 year 
+#first add the dest_mort dataset to the inout dataset 
+inoutd = merge(inouto, dest_mort, by.x = c("destid", "year"), by.y = c("destid", "cyear"))
+inoutd = inoutd %>% rename(cyear = year, year = year.y)
+inoutd$lagyear = inoutd$year - 1 #this is the "initial" / time 0 year 
 
 #then add the intial_mort dataset to the inoutd dataset 
 
-inoutdm_norace = merge(inoutd_norace, initial_mort_norace, by.x = c("lagyear","origid"), by.y = c("year", "origid"))
-final_mort_norace = inoutdm_norace %>% rename(out_o = n2, 
+inoutdm = merge(inoutd, initial_mort, by.x = c("lagyear","origid"), by.y = c("year", "origid"))
+final_mort = inoutdm %>% rename(out_o = n2, 
                                               totin_d = totin, 
                                               totout_d = totout, 
                                               pop_o0 = pop_o,
                                               rate_o0 = rate_o)
 
-###################################################################################
-#### 6) calculate migration term 
-#####################################################################################
-##################################################################################
-# NON RACE-SPECIFIC MIGTERM 
-
-
-migterm = final_mort_norace %>% group_by(destid, year) %>% 
-  mutate(migterm = (sum(out_o *rate_o0) + rate_d0 * (as.numeric(pop_d0)-as.numeric(totout_d)))/(sum(out_o) + (as.numeric(pop_d0)-totout_d))) %>% 
-  distinct(destid, year, rate_d0, rate_d1, .keep_all = TRUE)
-
-
-
-save(migterm, file = "data_processed/migterm_premature.Rdata")
-
 
 
 ################################################################################
-#### 7) add natality data for sensitivity analysis 
+#### 6) add natality data for sensitivity analysis 
 ###################################################################################
 
 nat_wonder = read.delim("data_raw/nat1621.txt")
@@ -258,11 +212,44 @@ nat = nat %>% select(Year, fips, births) #when merging with destid we don't real
 
  
 
-#now merge with migterm 
-natmig = merge(migterm, nat, by.x = c("destid", "lagyear"), by.y = c("fips", "Year"), all.x = TRUE)
+#now merge with final_mort
+natmort = merge(final_mort, nat, by.x = c("destid", "lagyear"), by.y = c("fips", "Year"), all.x = TRUE)
 #this attaches births to each destination at the initial time period... I think this is what we want, but this may change as i do more thinking and as I begin including natality in my calcs 
+natmort = natmort %>% rename(births_d0 = births)
 
-#no evidence of duplicates 
-dups =natmig %>% group_by(year, destid) %>% filter(n()>1) 
+#this dataset has premature mortality, migration flow, and natality estimates for 2011 through 2019 
+#save(natmort, file ="data_processed/mort_mig_nat.Rdata")
 
-save(natmig, file ="data_processed/migterm_natality.Rdata")
+
+
+###################################################################################
+#### 7) calculate migration term 
+#####################################################################################
+##################################################################################
+# migterm has no natality data and is therefore available for the majority of counties 
+# migterm_nat includes natality data and is therefore missing for many counties 
+
+
+migterm = natmort %>% group_by(destid, year) %>% 
+  mutate(migterm = (sum(out_o *rate_o0) + rate_d0 * (as.numeric(pop_d0)-as.numeric(totout_d)))/(sum(out_o) + (as.numeric(pop_d0)-totout_d)),
+         migterm_nat = (sum(out_o *rate_o0) + rate_d0 * (as.numeric(pop_d0) + births_d0 - as.numeric(deaths_d1)-as.numeric(totout_d)))/(sum(out_o) + (as.numeric(pop_d0)+births_d0-as.numeric(deaths_d1)-totout_d)),
+         migdiff = migterm_nat - migterm) %>% 
+  distinct(destid, migterm, year, rate_d0, rate_d1, .keep_all = TRUE)
+
+#many missings introduced when migterm is calcd; almost triple 
+#differences are small when comparing migterms with natality to migterms without natality!!! 
+
+summary(migterm$migterm[!is.na(migterm$births_d0)])
+summary(migterm$migterm_nat)
+
+
+#save(migterm, file = "data_processed/migterm_premature.Rdata")
+
+##############################################################################
+#### 8) add urbanicity code
+##############################################################################
+urbcodes = haven::read_sas("data_raw/nchs_urbanicity_wlabels.sas7bdat")
+migurb = merge(migterm, urbcodes, by.x = "destid", by.y = "fipscode")
+nojoin = dplyr::anti_join(migterm,urbcodes, by = join_by("destid"== "fipscode"))
+
+save(migurb, file = "data_processed/migterm_premature_urb.Rdata")
