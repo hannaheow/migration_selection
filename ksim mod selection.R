@@ -10,14 +10,8 @@ load("data_processed/imputed_for_ksim.Rdata")
 # it has natality, death, population, premature mortality rates, migration flows, rural/urb codes but no migterms (yet)
 # it is balanced and has no missing rates (except for initial years)
 
-
-
-
-
-ksi = seq(from =-500, to = 500, by = 50)
-ksj = seq(from = 500, to = -500, by = -50)
-
-bickij = data.frame()
+#this formula produced lowest bic for spatial and non spatial models as shown in "spatial mod selection.R"
+fff4 = rate_d1 ~ ft + ns(rate_d0, df = 4) + ns(migterm, df = 4) # + (1 + t | GEOID) 
 
 # add geography for use on spatial stuff 
 cp = tidycensus::get_acs(geography = "county", year = 2019, variables = c(tpop = "B01003_001"), survey = "acs5", output = "wide", geometry = TRUE)
@@ -39,6 +33,11 @@ BICsplm = function(object, k=2){
 load("data_processed/queenw.Rdata")
 
 
+ksi = seq(from =-400, to = 300, by = 100)
+ksj = seq(from = 300, to = -300, by = -100)
+
+bickij = data.frame()
+
 for (i in 1:length(ksi)) {
   for (j in 1:length(ksj)) {
     
@@ -54,21 +53,26 @@ for (i in 1:length(ksi)) {
     cpij = plm::pdata.frame(cpij, index = c("GEOID", "year"))
     cpij$ft = as.factor(cpij$year)
     
-    #this is the best nonspatial model as determined during hypothesis 3 
-    # this formula is called fff4 in other places 
-    nospat_fff4 = splm::spml(formula = rate_d1 ~ ft + ns(rate_d0, df = 4) + ns(migterm, df = 4) # + (1 + t | GEOID) 
-                             , data =cpij, model = "random", listw = queenw, lag = FALSE, spatial.error= "none")
+   
+    # some ksi, ksj pairs throw fail to converge errors..... trycatch is trying to continue past those errors... 
+    tryCatch({
+      #this is the best nonspatial model as determined during hypothesis 3 
+      nospat_fff4 = splm::spml(formula = fff4, 
+                             data =cpij, model = "random", listw = queenw, lag = FALSE, spatial.error= "none") 
+             
+      #this is the best spatial model as determined during hypothesis 3 
+      spat_fff4 = splm::spml(formula = fff4, data =cpij, model = "random", listw = queenw, lag = FALSE, spatial.error= "b", local = list(parallel = TRUE))
+             
+      bicnospat = BICsplm(nospat_fff4)
+      bicspat = BICsplm(spat_fff4)
+             
+      outputtempdf = data.frame(ksi = unique(cpij$ksi), ksj = unique(cpij$ksj), bicnospat = bicnospat, bicspat = bicspat)},
+             
+             
+      error = function(e){cat("ERROR :", conditionMessage(e))})
     
-    #this is the best spatial model as determined during hypothesis 3 
-    # NEED TO CONFIRM STILL !!!!! 
-    spat_fff4 = splm::spml(formula = fff4, data =cpij, model = "random", listw = queenw, lag = FALSE, spatial.error= "b", local = list(parallel = TRUE))
     
-    bicnospat = BICsplm(nospat_fff4)
-    bicspat = BICsplm(spat_fff4)
-    
-    tempdf = data.frame(ksi = unique(cpij$ksi), ksj = unique(cpij$ksj), bicnospat = bicnospat, bicspat = bicspat)
-    
-    bickij =  rbind(bickij, tempdf)
+    bickij =  rbind(bickij, outputtempdf)
   }
 }
 
