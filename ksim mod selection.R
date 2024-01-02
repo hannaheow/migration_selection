@@ -78,3 +78,14 @@ for (i in 1:length(ksi)) {
 
 save(bickij, file = "data_processed/ksim_bic.Rdata")
 
+#appears to be missing the following pairs: 
+# -300, 300
+# -300, 200
+# strangely repeated -400, -300 three times.... 
+
+spatchoice_kij = bickij[bickij$bicspat == min(bickij$bicspat),]
+nospatchoice_kij = bickij[bickij$bicnospat == min(bickij$bicnospat),]
+
+
+#strange that spatial and nonspatial models have preference for different levels of ksi and ksj
+# run again with more granularity near the lowest spatial 

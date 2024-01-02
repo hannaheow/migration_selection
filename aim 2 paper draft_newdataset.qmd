@@ -453,6 +453,8 @@ After concluding that the migration term did add explainability to our baseline 
 
 For a more robust comparison, we then accounted for spatial autocorrelation within $modelA$.
 
+\-- spatial things here --
+
 We found that for both urban and rural counties, the models with the lowest BIC scores included splines with four degrees of freedom each for the migration term and lagged age-adjusted mortality as well as the net migration term factor variable. These models were very similar to $modelA$ but with four degree of freedom splines instead of five. Though the models for urban and rural counties are similar, the effect of the $migterm$ appears to differ between rural and urban counties. See **Figure X** below.
 
 ```{r create separate rural and urban datasets, include = FALSE, message = FALSE, warning = FALSE}
@@ -610,7 +612,9 @@ urbmod = get(rownames(urbanbic[urbanbic$BIC == min(urbanbic$BIC),]))
 
 ![Figure X: Urban counties are less sensitive to the effects of $migterm$ than rural counties.](images/urb_migtermplot.png)
 
-As shown above, urban counties appear to be less sensitive to the $migterm$ than rural counties. Migration from less healthy places (ie when $migterm - mortrate_{initial} = 10$; orange) appears to affect rural counties more greatly than urban counties. This makes sense because urban counties have greater population size making them resistant to the effects of incoming migration. However, the effect of migration from healthier counties ($migterm - mortrate_{initial} = -10$; green) appears to be similar for rural and urban counties. We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. Healthy rural counties experiencing healthy migration have predicted mortality rates that are approximately constant and average (\~850 deaths per 100,000 population). Meanwhile, rural counties with initial mortality rate \>850 deaths per 100,000 population that experience unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (ie unhealthy rural counties become healthier, regardless of the health of migrants).
+As shown above, urban counties appear to be less sensitive to the $migterm$ than rural counties. Migration from less healthy places (ie when $migterm - mortrate_{initial} = 10$; orange) appears to affect rural counties more greatly than urban counties. This makes sense because urban counties have greater population size making them resistant to the effects of incoming migration. However, the effect of migration from healthier counties ($migterm - mortrate_{initial} = -10$; green) appears to be similar for rural and urban counties. We see that healthy rural counties experiencing unhealthy migration experience higher (unhealthier) predicted rates than initial rates. However, unhealthy rural counties experiencing unhealthy migration experience lower (healthier) predicted rates than initial rates. Healthy rural counties experiencing healthy migration have predicted mortality rates that are approximately constant and average (\~850 deaths per 100,000 population). Meanwhile, rural counties with initial mortality rate \>850 deaths per 100,000 population that experience unhealthy migration have predicted mortality rates that are lower than their initial mortality rates (ie unhealthy rural counties become healthier, regardless of the health of migrants). This confirms **Hypothesis 3**: the effect of migration differs between rural and urban counties.
+
+Finally, after running the same model selection steps using a simulated dataset, we conclude that a k value of XXX best explains current trends in county-level premature mortality.
 
 <!--# need to confirm no interactions between netmig, migterm, and autoreg -->
 

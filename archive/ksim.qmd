@@ -1,0 +1,99 @@
+---
+title: "migterm simulation"
+format: html
+editor: visual
+---
+
+As a refresher:
+
+"Finally to test Hypothesis 4, we add a parameter to our equation for our migration term to simulate selection for migration. This parameter will be added to the mortality rate of each origin county. When the parameter is subtracted (ie decreased mortality rate), we simulate migration by individuals who are healthier than the average of their origin county. When the parameter is added (ie increased mortality rate), we simulate migration by individuals who are unhealthier than the average of their origin county. Since we hypothesize that the effect of migration on county-level health differs for rural and urban counties, we will test the values of this parameter separately for rural and urban counties."
+
+```{r}
+
+load("data_processed/imputed_for_ksim.Rdata") 
+#this dataset is called natmorturb_imp
+# it has natality, death, population, premature mortality rates, migration flows, rural/urb codes but no migterms (yet)
+# it is balanced and has no missing rates (except for initial years)
+
+
+ks = seq(from =-500, to = 500, by = 50)
+
+
+migtermk = data.frame()
+for (i in 1:length(ks)) {
+
+  tempdf = natmorturb_imp %>% group_by(destid, year) %>% 
+  mutate(migterm = (sum(out_o *(rate_o0 + ks[i]), na.rm = TRUE) + (rate_d0 + ks[i]) * (as.numeric(pop_d0)-as.numeric(totout_d)))/(sum(out_o, na.rm = TRUE) + (as.numeric(pop_d0)- totout_d))) %>% 
+  distinct(destid, migterm, year, rate_d0, rate_d1, .keep_all = TRUE)
+
+  tempdf$ks = ks[i]
+  
+  migtermk = rbind(migtermk, tempdf)
+}
+
+```
+
+```{r}
+ggplot(data = migtermk) + geom_point(aes(x=migterm, y = rate_d1, color = as.factor(ks)))
+
+```
+
+#### Rural counties only
+
+```{r rural only}
+ggplot(data = migtermk %>% filter(rural == 1)) + geom_point(aes(x=migterm, y = rate_d1, color = as.factor(ks)))
+```
+
+#### Urban counties only
+
+```{r urban only}
+ggplot(data = migtermk %>% filter(rural == 0)) + geom_point(aes(x=migterm, y = rate_d1, color = as.factor(ks)))
+```
+
+#### Migterm versus K
+
+```{r}
+ggplot(data = migtermk) + geom_point(aes(x = ks, y = migterm))
+```
+
+The outliers appear to be in South Dakota...they have extremely high age adjusted premature mortality rates....
+
+```{r}
+extreme = migtermk %>% filter(ks == -500) %>% filter(migterm>1000 & !is.na(migterm))
+
+extreme 
+
+extreme2 = migtermk %>% filter(rate_d1 > 1600 & !is.na(rate_d1))
+```
+
+### an attempt with k_i and k_j
+
+```{r}
+
+ksi = seq(from =-500, to = 500, by = 50)
+ksj = seq(from = 500, to = -500, by = -50)
+
+migtermkij = data.frame()
+
+for (i in 1:length(ksi)) {
+  for (j in 1:length(ksj)) {
+    
+    tempdf = natmorturb_imp %>% group_by(destid, year) %>% 
+  mutate(migterm = (sum(out_o *(rate_o0 + ksi[i]), na.rm = TRUE) + (rate_d0 + ksj[j]) * (as.numeric(pop_d0)-as.numeric(totout_d)))/(sum(out_o, na.rm = TRUE) + (as.numeric(pop_d0)- totout_d))) %>% 
+  distinct(destid, migterm, year, rate_d0, rate_d1, .keep_all = TRUE)
+
+  tempdf$ksi = ksi[i]
+  tempdf$ksj = ksj[j]
+  
+  migtermkij = rbind(migtermkij, tempdf)
+  }
+}
+
+save(migtermkij, file = "data_processed/migterm_ksim_ij.Rdata")
+```
+
+model fitting - does our model fit better or worse with different values of k
+
+use the model selected in hypotheses a and b to then select k
+
+make sure the spatial stuff is working do the spatial model selection step first
