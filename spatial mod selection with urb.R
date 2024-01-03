@@ -62,8 +62,11 @@ nospat_fm_urb = splm::spml(formula = fm, data =cpurb, model = "random",
                        listw = queenurbw, lag = FALSE, spatial.error= "none")
 nospat_fnom_urb = splm::spml(formula = fnom, data =cpurb, model = "random", 
                          listw = queenurbw, lag = FALSE, spatial.error= "none")
+
+# unclear why this throws a singularity error....... 
 nospat_fff2_urb = splm::spml(formula = fff2, data =cpurb, model = "random", 
-                         listw = queenurbw, lag = FALSE, spatial.error= "none")
+                          listw = queenurbw, lag = FALSE, spatial.error= "none")
+
 nospat_fff3_urb = splm::spml(formula = fff3, data =cpurb, model = "random", listw = queenurbw, lag = FALSE, spatial.error= "none")
 nospat_fff4_urb = splm::spml(formula = fff4, data =cpurb, model = "random", listw = queenurbw, lag = FALSE, spatial.error= "none")
 nospat_fff5_urb = splm::spml(formula = fff5, data =cpurb, model = "random", listw = queenurbw, lag = FALSE, spatial.error= "none")
@@ -74,18 +77,32 @@ nospat_fff5_nomig_urb = splm::spml(formula = fff5_nomig, data =cpurb, model = "r
 
 #RURAL 
 # without spatial stuff 
-# URB 
-#without spatial stuff 
+
 nospat_fm_rural = splm::spml(formula = fm, data =cprural, model = "random", 
                        listw = queenruralw, lag = FALSE, spatial.error= "none")
+
+#testing plm.... the models that throw singularity error in splm do not throw singularity error in plm..... 
+#summary of plmnospat_fm_rural and nospat_fm_rural look nearly identical...just some slight differences in decimals of std error.... 
+plmnospat_fm_rural = plm::plm(formula = fm, data =cprural, model = "random") 
+                            # listw = queenruralw, lag = FALSE, spatial.error= "none")
+
+
+
 nospat_fnom_rural = splm::spml(formula = fnom, data =cprural, model = "random", 
                          listw = queenruralw, lag = FALSE, spatial.error= "none")
 nospat_fff2_rural = splm::spml(formula = fff2, data =cprural, model = "random", 
                          listw = queenruralw, lag = FALSE, spatial.error= "none")
-nospat_fff3_rural = splm::spml(formula = fff3, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
-# unclear why this one throws singularity error but others do not...... 
 
+# unclear why this one throws singularity error but others do not...... 
+nospat_fff3_rural = splm::spml(formula = fff3, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
+
+#runs fine in plm instead of splm..... if we decide we want nonspatial models (which is not part of current hypotheses!) we can switch to plm
+# need to make sure i understand singularity issue well....discuss w amy and continue to chatgpt/google 
+plmnospat_fff3_rural = plm::plm(formula = fff3, data =cprural, model = "random") #, listw = queenruralw, lag = FALSE, spatial.error= "none")
+
+# unclear why this throws singularity error..... 
 nospat_fff4_rural = splm::spml(formula = fff4, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
+
 nospat_fff5_rural = splm::spml(formula = fff5, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
 nospat_fff2_nomig_rural = splm::spml(formula = fff2_nomig, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
 nospat_fff3_nomig_rural = splm::spml(formula = fff3_nomig, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
@@ -93,6 +110,9 @@ nospat_fff4_nomig_rural = splm::spml(formula = fff4_nomig, data =cprural, model 
 nospat_fff5_nomig_rural = splm::spml(formula = fff5_nomig, data =cprural, model = "random", listw = queenruralw, lag = FALSE, spatial.error= "none")
 
 
+
+# some singularity errors..... trycatch is trying to continue past those errors... 
+tryCatch({
 
 # URB 
 # with spatial stuff 
@@ -177,8 +197,7 @@ spat_fff5_nomig_rural = splm::spml(formula = fff5_nomig, data =cprural, model = 
 save(spat_fff5_nomig_rural, file = "temporary output/spat_fff5_nomig_rural.Rdata")
 
 
-
-
+}, error = function(e){cat("ERROR :", conditionMessage(e))})
 
 
 
@@ -204,18 +223,19 @@ bicnospat_rural = c(fm = BICsplm(nospat_fm_rural),
               fff2_nomig = BICsplm(nospat_fff2_nomig_rural),
               #fff3 = BICsplm(nospat_fff3_rural),
               fff3_nomig = BICsplm(nospat_fff3_nomig_rural),
-              fff4 = BICsplm(nospat_fff4_rural),
+              #fff4 = BICsplm(nospat_fff4_rural),
               fff4_nomig = BICsplm(nospat_fff4_nomig_rural),
               fff5 = BICsplm(nospat_fff5_rural),
               fff5_nomig = BICsplm(nospat_fff5_nomig_rural))
 names(bicnospat_rural) = c("fm", "fnom", "fff2", "fff2_nomig", #"fff3", 
-                           "fff3_nomig","fff4", "fff4_nomig", "fff5", "fff5_nomig")
+                           "fff3_nomig",#"fff4", 
+                           "fff4_nomig", "fff5", "fff5_nomig")
 nospatchoice_rural = names(bicnospat_rural[bicnospat_rural== min(bicnospat_rural)])
 
 
 bicnospat_urb = c(fm = BICsplm(nospat_fm_urb),
                     fnom = BICsplm(nospat_fnom_urb),
-                    fff2 = BICsplm(nospat_fff2_urb), 
+                   # fff2 = BICsplm(nospat_fff2_urb), 
                     fff2_nomig = BICsplm(nospat_fff2_nomig_urb),
                     fff3 = BICsplm(nospat_fff3_urb),
                     fff3_nomig = BICsplm(nospat_fff3_nomig_urb),
@@ -223,7 +243,8 @@ bicnospat_urb = c(fm = BICsplm(nospat_fm_urb),
                     fff4_nomig = BICsplm(nospat_fff4_nomig_urb),
                     fff5 = BICsplm(nospat_fff5_urb),
                     fff5_nomig = BICsplm(nospat_fff5_nomig_urb))
-names(bicnospat_urb) = c("fm", "fnom", "fff2", "fff2_nomig", "fff3", 
+names(bicnospat_urb) = c("fm", "fnom", #"fff2", 
+                         "fff2_nomig", "fff3", 
                            "fff3_nomig","fff4", "fff4_nomig", "fff5", "fff5_nomig")
 nospatchoice_urb = names(bicnospat_urb[bicnospat_urb== min(bicnospat_urb)])
 
