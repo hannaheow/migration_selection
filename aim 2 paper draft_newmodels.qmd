@@ -297,15 +297,6 @@ tm_shape(cp19) + tm_polygons(col = "rate_d1", style = "quantile", n = 10, palett
   tm_layout(title = "2019 CDC WONDER", frame = FALSE, legend.outside = TRUE)
 ```
 
-```{r models without and without spatial stuff , echo = FALSE, warning = FALSE, message = FALSE}
- 
-#code for spatial and nonspatial models is in the spatial mod selection.R file 
-#outputs from spatial mod selection.R include temporary output/bicspat.Rdata" and "temporary output/bicnospat.Rdata")
-
-load("temporary output/bicspat.Rdata")
-load("temporary output/bicnospat.Rdata")
-```
-
 ### [Approach]{.underline}
 
 We test the following four hypotheses:
@@ -320,7 +311,7 @@ We test the following four hypotheses:
 
 Considering the exploratory nature these hypotheses, we choose to begin by comparing our *migrational*-temporal autoregressive models with more traditional spatio-temporal models. In traditional spatio-temporal models, place-based determinants of health are regressed against themselves over time as well as against the relative health of their neighbors. Because we hypothesize that spatial correlation may be the result of intra-county migration, we first replace the spatial component of an autoregressive model with a migration component and compare.
 
-Our baseline model is similar to simple autoregressive county-level mortality models used in the past [@yang2012]. In our baseline model, we include yearly mortality rates as a function of time (treated categorically) and premature mortality rates lagged by one year. Random intercepts and slopes in time are included to account for within-county correlation. We included random intercepts for each destination county to account for variation between counties, as recommended by Greenland and Morgenstern's assessment of best practices for ecological studies [@greenland1989]. Splines are used for mortality rates. For a given urbanicity, the baseline model (without splines) is shown below:
+Our baseline model is similar to simple autoregressive county-level mortality models used in the past [@yang2012]. In our baseline model, we include yearly mortality rates as a function of time (treated categorically) and premature mortality rates lagged by one year. Random intercepts and slopes in time are included to account for within-county correlation. We included random intercepts for each destination county to account for variation between counties, as recommended by Greenland and Morgenstern's assessment of best practices for ecological studies [@greenland1989]. Splines are used to account for potential nonlinearity in mortality rates. For a given urbanicity subgroup, the baseline model (without splines) is shown below:
 
 $$  y_{it} = \beta_0 + \beta_{1}t_{13i} + \beta_{2}t_{14i} + \beta_{3}t_{15i}  + \beta_{4}t_{16i} + \beta_{5}t_{17i} + \beta_{6}t_{18i} + \beta_{7}t_{19i} + \beta_{8} y_{t-1,i} + \upsilon_{i}t + \mu_{i} + \epsilon_{it}    $$
 
@@ -370,9 +361,49 @@ Our weighted-average approach implicitly accounts for between-county selection f
 
 Because we know county-level health to be related to county-level natality, and because our outcome variable (premature age-adjusted mortality) may not capture the health of young people in counties, we first conducted a sensitivity analysis of the effect of natality on the effect of our migration term. We determined that natality does not change the effect or explainability of the migration term and therefore does not need to be included in our models. <!--# more here??? -->
 
-We analyzed several models and used the Bayesian Information Criterion (BIC) to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power [@kuha2004]. Starting with our baseline model, we iteratively added splines for the prior year's average county-level mortality rate and the migration term, capturing potentially nonlinear trends.
+We analyzed several models and used the Bayesian Information Criterion (BIC) to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power [@kuha2004]. Starting with our baseline model, we iteratively added splines for the prior year's average county-level premature mortality rate and the migration term, capturing potential nonlinear trends. We chose to keep the number of degrees of freedom equal for splines for the migration term and premature mortality rate since we noticed that imbalanced degrees of freedom tended to produce higher BIC scores. The table below shows the model with the lowest BIC score in blue. All models were created using the splm and and splines R packages [@splines][@millo2023].
 
-**To test Hypothesis 2**, we built models that accounted for spatial autocorrelation as well as migration using the splm package in R[@millo2023]. We again compared these models using BIC.
+```{r nonspatial models here, echo = FALSE, warning = FALSE, message = FALSE}
+
+#BIC scores were generated in "spatial mod selection.R"  
+load("temporary output/bicnospat.Rdata")
+
+tablex = data.frame("Migration term included" = c(rep(TRUE, 5), rep(FALSE, 5)), 
+                    "Degrees of freedom" = rep(c(1,2,3,4,5), 2),
+                    "BIC" = c(bicnospat[1], bicnospat[3], bicnospat[5], bicnospat[7], bicnospat[9],
+                              bicnospat[2], bicnospat[4], bicnospat[6], bicnospat[8], bicnospat[10]))
+
+
+library(gt)
+gt::gt(tablex) |> tab_style(style = list(cell_fill(color = "lightcyan"), 
+                                      cell_text(weight = "bold")),
+                            locations = cells_body(rows = (BIC == min(BIC)))) |>
+  cols_label(Migration.term.included = "Migration included", Degrees.of.freedom="DF", BIC= "BIC") |>
+  tab_header(title = "Models without spatial error")
+
+```
+
+**To test Hypothesis 2**, we built models that accounted for spatial error as well as migration again using the splm and spliin R[@millo2023]. We again compared these models using BIC while iteratively adding splines with equal degrees of freedom for migration and lagged premature mortality. Again, the model with the lowest BIC score is shown in blue in the table below.
+
+```{r spatial models here, echo = FALSE, warning = FALSE, message = FALSE}
+
+#BIC scores were generated in "spatial mod selection.R"  
+load("temporary output/bicspat.Rdata")
+
+tablex = data.frame("Migration term included" = c(rep(TRUE, 5), rep(FALSE, 5)), 
+                    "Degrees of freedom" = rep(c(1,2,3,4,5), 2),
+                    "BIC" = c(bicspat[1], bicspat[3], bicspat[5], bicspat[7], bicspat[9],
+                              bicspat[2], bicspat[4], bicspat[6], bicspat[8], bicspat[10]))
+
+
+library(gt)
+gt::gt(tablex) |> tab_style(style = list(cell_fill(color = "lightcyan"), 
+                                      cell_text(weight = "bold")),
+                            locations = cells_body(rows = (BIC == min(BIC)))) |>
+  cols_label(Migration.term.included = "Migration included", Degrees.of.freedom="DF", BIC= "BIC") |>
+  tab_header(title = "Models accounting for spatial error")
+
+```
 
 **To test Hypothesis 3**, we built separate models for urban and rural counties. This involved creating separate datasets for rural and urban counties and completing the same model selection steps as above.
 
@@ -402,17 +433,9 @@ Finally **to test Hypothesis 4**, we added a parameter to the premature mortalit
 
 ### [**Results**]{.underline}
 
-To justify further investigation, first we determined that our migration term added explainability (as measured by low BIC score) to our most basic autoregressive model. These results are shown below.
+To justify further investigation, first we determined that our migration term added explainability (as measured by low BIC score) to our most basic autoregressive model. The best fitting model in terms of BIC score included splines with four degrees of freedom for both the autoregressive term and our weighted average migration term. Thus, models that account for migration had more explanatory power than models that included only the prior year's average county-level mortality rate. **This confirms Hypothesis 1.**
 
-`r basicmodelsummaries`
-
-After concluding that the migration term did add explainability to our baseline model we then tested for splines. The best fitting model in terms of BIC score included four spline terms for both the autoregressive term and our weighted average migration term. This model will be called $modelA$. Thus, models that account for migration had more explanatory power than models that included only the prior year's average county-level mortality rate. **This confirms Hypothesis 1.** $modelA$ is shown below.
-
-`r modelsummary::modelsummary(list("mod2A" = get(m1_choice)))`
-
-For a more robust comparison, we then accounted for spatial autocorrelation within $modelA$.
-
-\-- spatial things here --
+For a more robust comparison, we then accounted for spatial error. Again, we found that the best fitting model in terms of BIC score included splines with four degrees of freedom for both the autoregressive term and our weighted average migration term. Additionally, we determined that models that accounted for both spatial error and migration had lower BIC scores than models that did not account for spatial error or did not include our migration term.
 
 We found that for both urban and rural counties, the models with the lowest BIC scores included splines with four degrees of freedom each for the migration term and lagged age-adjusted mortality as well as the net migration term factor variable. These models were very similar to $modelA$ but with four degree of freedom splines instead of five. Though the models for urban and rural counties are similar, the effect of the $migterm$ appears to differ between rural and urban counties. See **Figure X** below.
 
