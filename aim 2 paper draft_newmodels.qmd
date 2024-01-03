@@ -347,20 +347,30 @@ $pop_{i, t-1}$ is the population of an unique destination county $i$ at initial 
 Below is a table showing $mig_{it}$ and $y_{it}$ by year:
 
 ```{r table1 by year, echo = FALSE, warning = FALSE, message = FALSE}
-table1::label(cpall$rate_d1) = "Premature age-adjusted mortality rate"
-table1::label(cpall$migterm) = "Weighted average migration term"
-table1::table1(~ rate_d1 + migterm | year, data = cpall %>% filter(year!="2011"))
+table1::label(migterm_imp$rate_d1) = "Premature age-adjusted mortality rate"
+table1::label(migterm_imp$migterm) = "Weighted average migration term"
+table1::table1(~ rate_d1 + migterm | year, data = migterm_imp %>% filter(year!="2011"))
+
+
+plotdat = migterm_imp %>% group_by(rural, year) %>% 
+  mutate(medianrate = median(rate_d1),
+         medianmig = median(migterm),
+         rural = as.factor(rural)) %>% 
+  select("year", "medianmig", "medianrate", "rural") %>% 
+  pivot_longer(-c(year,rural), names_to = "var", values_to = "value")
+
+ggplot(data = plotdat, aes(x = year, y = value, group = interaction(rural, var), color = as.factor(var), shape = rural)) + geom_line() + geom_point() + 
+  labs(color = "", shape = "") + xlab("") + ylab("Age-adjusted premature deaths per 100,000 population") + 
+  scale_color_manual(labels = c("Median weighted average migration term", "Median age-adjusted premature mortality rate"), values = c("darkblue", "darkred")) + 
+  scale_shape_manual(labels = c("Urban", "Rural"), values = c(1, 0)) +
+  theme_minimal()
 ```
 
 Our weighted-average approach implicitly accounts for between-county selection for migration, but does not account for within-county selection of migrants. In other words, our best guess for the mortality rate of migrants is exactly the mortality rate of their original county; meanwhile, some counties are more likely to be destinations for migration than others.
 
 Because we know county-level health to be related to county-level natality, and because our outcome variable (premature age-adjusted mortality) may not capture the health of young people in counties, we first conducted a sensitivity analysis of the effect of natality on the effect of our migration term. We determined that natality does not change the effect or explainability of the migration term and therefore does not need to be included in our models. <!--# more here??? -->
 
-We analyzed several models and used the Bayesian Information Criterion (BIC) to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power [@kuha2004]. Starting with our baseline model, we iteratively added splines for the prior year's average county-level mortality rate and the migration term, capturing potentially nonlinear trends. The models we tested are shown in Table X in the appendix.
-
-```{r table x here, echo = FALSE, warning = FALSE, message = FALSE}
-modselectiontable
-```
+We analyzed several models and used the Bayesian Information Criterion (BIC) to determine the best fitting model. BIC is commonly used to determine models with greatest explanatory power [@kuha2004]. Starting with our baseline model, we iteratively added splines for the prior year's average county-level mortality rate and the migration term, capturing potentially nonlinear trends.
 
 **To test Hypothesis 2**, we built models that accounted for spatial autocorrelation as well as migration using the splm package in R[@millo2023]. We again compared these models using BIC.
 
