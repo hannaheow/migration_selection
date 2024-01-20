@@ -50,8 +50,8 @@ BICsplm = function(object, k=2){
 
 
 
-ksi = 0
-ksj = seq(from = -50, to = 50, by = 10)
+ksj = 0
+ksi = seq(from = -50, to = 50, by = 10)
 
 
 ###############################################################################
@@ -131,8 +131,8 @@ for (i in 1:length(ksi)) {
   }
 }
 
-save(bickij_rural, file = "data_processed/ksim_bic_rural_kikjdiff.Rdata")
-save(bickij_urb, file = "data_processed/ksim_bic_urb_kikjdiff.Rdata")
+save(bickij_rural, file = "data_processed/ksim_bic_rural_kikjdiff_jconstant.Rdata")
+save(bickij_urb, file = "data_processed/ksim_bic_urb_kikjdiff_jconstant.Rdata")
 
 
 
