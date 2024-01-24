@@ -51,7 +51,7 @@ BICsplm = function(object, k=2){
 
 
 ksj = 0
-ksi = seq(from = -50, to = 50, by = 10)
+ksi = seq(from = -80, to = 50, by = 10)
 
 
 ###############################################################################
@@ -153,4 +153,4 @@ bickij = rbind(bickij_rural, bickij_urb)
 
 bickij = bickij %>% group_by(urbcat) %>% 
   mutate(zscore = scale(bicspat))
-ggplot(bickij) + geom_line(aes(x = ksj, y = zscore, group = urbcat, color = urbcat))
+ggplot(bickij) + geom_line(aes(x = ksi, y = zscore, group = urbcat, color = urbcat))
