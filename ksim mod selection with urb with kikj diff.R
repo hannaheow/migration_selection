@@ -50,8 +50,8 @@ BICsplm = function(object, k=2){
 
 
 
-ksj = 0
-ksi = seq(from = -80, to = 50, by = 10)
+ksj = seq(from = -80, to = 100, by = 10)
+ksi = 0 
 
 
 ###############################################################################
@@ -131,14 +131,9 @@ for (i in 1:length(ksi)) {
   }
 }
 
-save(bickij_rural, file = "data_processed/ksim_bic_rural_kikjdiff_jconstant.Rdata")
-save(bickij_urb, file = "data_processed/ksim_bic_urb_kikjdiff_jconstant.Rdata")
 
-
-
-
-
-
+save(bickij_rural, file = "data_processed/ksim_bic_rural_kikjdiff_iconstant.Rdata")
+save(bickij_urb, file = "data_processed/ksim_bic_urb_kikjdiff_iconstant.Rdata")
 
 spatchoice_kij_rural = bickij_rural[bickij_rural$bicspat == min(bickij_rural$bicspat),]
 nospatchoice_kij_rural = bickij_rural[bickij_rural$bicnospat == min(bickij_rural$bicnospat),]
@@ -153,4 +148,9 @@ bickij = rbind(bickij_rural, bickij_urb)
 
 bickij = bickij %>% group_by(urbcat) %>% 
   mutate(zscore = scale(bicspat))
-ggplot(bickij) + geom_line(aes(x = ksi, y = zscore, group = urbcat, color = urbcat))
+
+
+ggplot(bickij) + geom_line(aes(x = ksj, y = zscore, group = urbcat, color = urbcat)) + 
+  gg
+
+
