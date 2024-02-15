@@ -34,7 +34,7 @@ load("data_processed/queenw.Rdata")
 
 
 ksi = 0
-ksj = seq(from = 100, to = -100, by = -10)
+ksj = seq(from = 100, to = 200, by = 10)  #seq(from = 100, to = -100, by = -10)
 
 bickij = data.frame()
 
@@ -76,7 +76,7 @@ for (i in 1:length(ksi)) {
   }
 }
 
-save(bickij, file = "data_processed/ksim_bic_kikjdiff_iconstant.Rdata")
+save(bickij, file = "data_processed/ksim_bic_kikjdiff_iconstantMAX.Rdata")
 
 
 
