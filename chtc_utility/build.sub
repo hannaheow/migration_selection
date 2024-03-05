@@ -4,7 +4,7 @@ universe = vanilla
 log = interactive.log
 
 # If your build job needs access to any files in your /home directory, transfer them to your job using transfer_input_files
-# transfer_input_files = 
+transfer_input_files = image.def
 
 +IsBuildJob = true
 requirements = (OpSysMajorVer =?= 8)
