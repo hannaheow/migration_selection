@@ -14,13 +14,14 @@ l <- args[4]
 # library(splines)
 # library(splm)
 # library(plm)
+# library(haven)
 
-load("data_processed/imputed_for_ksim.Rdata") 
+load("imputed_for_ksim.Rdata") 
 #this dataset is called natmorturb_imp
 # it has natality, death, population, premature mortality rates, migration flows, rural/urb codes but no migterms (yet)
 # it is balanced and has no missing rates (except for initial years)
 
-urbcodes = haven::read_sas("data_raw/nchs_urbanicity_wlabels.sas7bdat") %>% 
+urbcodes = haven::read_sas("nchs_urbanicity_wlabels.sas7bdat") %>% 
   select(fipscode, rural) %>% 
   rename(rural_orig = rural)
 #add rural/urb for origin 
@@ -44,7 +45,7 @@ cp = tidycensus::get_acs(geography = "county", year = 2019, output = "wide", var
 
 
 #load spatial weights matrix created previously 
-load("data_processed/queenw.Rdata")
+load("queenw.Rdata")
 
 
 
@@ -65,12 +66,13 @@ BICsplm = function(object, k=2){
 bickij_int = data.frame()
 
 
+
 #this previously was the loop - now goes into code 
 
-nmk = nm %>% mutate(newk = case_when(migtype == "00" ~ kuu[l],
-                                     migtype == "01" ~ kur[k],
-                                     migtype == "10" ~ kru[j], 
-                                     migtype == "11" ~ krr[i]))
+nmk = nm %>% mutate(newk = case_when(migtype == "00" ~ l,
+                                     migtype == "01" ~ k,
+                                     migtype == "10" ~ j, 
+                                     migtype == "11" ~ i))
 
 # wrangling 
 tempdf = nmk %>%
@@ -78,10 +80,10 @@ tempdf = nmk %>%
   mutate(migterm = (sum(out_o *(rate_o0 + newk), na.rm = TRUE) + (rate_d0) * (as.numeric(pop_d0)-as.numeric(totout_d)))/(sum(out_o, na.rm = TRUE) + (as.numeric(pop_d0)- totout_d))) %>% 
   distinct(destid, migterm, year, rate_d0, rate_d1, .keep_all = TRUE)
 
-tempdf$kuu = kuu[l]
-tempdf$kur = kur[k]
-tempdf$kru = kru[j]
-tempdf$krr = krr[i]
+tempdf$kuu = l
+tempdf$kur = k
+tempdf$kru = j
+tempdf$krr = i
 
 cpij = merge(cp, tempdf, by.x = "GEOID", by.y = "destid", all.y = TRUE)
 
@@ -111,21 +113,19 @@ tryCatch({
   bicspat= BICsplm(spat_fff4)
   bicnospat = BICsplm(nospat_fff4)
   
-  outputtempdf = data.frame(kur = unique(cpij$kur), kru = unique(cpij$kru),
+  bickij_int = data.frame(kur = unique(cpij$kur), kru = unique(cpij$kru),
                             kuu = unique(cpij$kuu), krr = unique(cpij$krr),
                             bicspat = bicspat, 
                             bicnospat = bicnospat)
   
-  save(outputtempdf, file = paste0("ksim_int_output/tempoutput", outputtempdf$kur, outputtempdf$kru, outputtempdf$kuu, outputtempdf$krr))
+  save(bickij_int, file = paste0("tempoutput", bickij_int$kur, "_",bickij_int$kru,"_", bickij_int$kuu, "_",bickij_int$krr))
   
-  bickij_int =  rbind(bickij_int, outputtempdf)
+
 },
 
 error = function(e){cat("ERROR :", conditionMessage(e))}) #this will just go to the .out file 
 
 
-
-save(bickij_int, file = "data_processed/ksim_bic_interaction.Rdata")
 
 
 #submit file needs to be set up to grab this output 
