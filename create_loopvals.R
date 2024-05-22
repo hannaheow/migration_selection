@@ -1,0 +1,20 @@
+ki = seq(-200, 200, by = 20)
+kj = ki
+kl = ki
+kk = ki 
+
+
+testcon = file("temp.txt", open = "a")
+isOpen(testcon)
+
+
+for(i in 1:length(ki)) {
+  for(j in 1:length(kj)) {
+    for (k in 1:length(kk)) {
+      for (l in 1:length(kl)) {
+        cat(paste(ki[i], kj[j], kk[k], kl[l], sep = ", "), file = testcon, append = TRUE, sep = "\n")
+      }
+    }
+  }
+}
+close(testcon)
