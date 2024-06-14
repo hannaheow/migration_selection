@@ -183,45 +183,45 @@ spat_fff5r_nomig  = splm::spml(formula = fff5r_nomig, data =cpall, model = "rand
 save(spat_fff5r_nomig , file = "temporary output/spat_fff5r_nomig.Rdata")
 
 
-
-# with spatial stuff 
-# models with "stratified" interaction terms for rural 
-
-spat_fmrs  = splm::spml(formula = fmrs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fmrs , file = "temporary output/spat_fmrs.Rdata")
-
-spat_fnomrs  = splm::spml(formula = fnomrs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fnomrs , file = "temporary output/spat_fnomrs.Rdata")
-
-spat_fff2rs  = splm::spml(formula = fff2rs, data =cpall, model = "random", listw=  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff2rs , file = "temporary output/spat_fff2rs.Rdata")
-
-spat_fff3rs  = splm::spml(formula = fff3rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff3rs , file = "temporary output/spat_fff3rs.Rdata")
-
-
-spat_fff4rs  = splm::spml(formula = fff4rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff4rs , file = "temporary output/spat_fff4rs.Rdata")
-
-
-spat_fff5rs  = splm::spml(formula = fff5rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff5rs , file = "temporary output/spat_fff5rs.Rdata")
-
-
-spat_fff2rs_nomig  = splm::spml(formula = fff2rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff2rs_nomig , file = "temporary output/spat_fff2rs_nomig.Rdata")
-
-
-spat_fff3rs_nomig  = splm::spml(formula = fff3rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff3rs_nomig , file = "temporary output/spat_fff3rs_nomig.Rdata")
-
-
-spat_fff4rs_nomig  = splm::spml(formula = fff4rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff4rs_nomig , file = "temporary output/spat_fff4rs_nomig.Rdata")
-
-
-spat_fff5rs_nomig  = splm::spml(formula = fff5rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
-save(spat_fff5rs_nomig , file = "temporary output/spat_fff5rs_nomig.Rdata")
+# i don't have output for the models below here which i think means that they didn't run properly 
+# # with spatial stuff 
+# # models with "stratified" interaction terms for rural 
+# 
+# spat_fmrs  = splm::spml(formula = fmrs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fmrs , file = "temporary output/spat_fmrs.Rdata")
+# 
+# spat_fnomrs  = splm::spml(formula = fnomrs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fnomrs , file = "temporary output/spat_fnomrs.Rdata")
+# 
+# spat_fff2rs  = splm::spml(formula = fff2rs, data =cpall, model = "random", listw=  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff2rs , file = "temporary output/spat_fff2rs.Rdata")
+# 
+# spat_fff3rs  = splm::spml(formula = fff3rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff3rs , file = "temporary output/spat_fff3rs.Rdata")
+# 
+# 
+# spat_fff4rs  = splm::spml(formula = fff4rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff4rs , file = "temporary output/spat_fff4rs.Rdata")
+# 
+# 
+# spat_fff5rs  = splm::spml(formula = fff5rs, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff5rs , file = "temporary output/spat_fff5rs.Rdata")
+# 
+# 
+# spat_fff2rs_nomig  = splm::spml(formula = fff2rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff2rs_nomig , file = "temporary output/spat_fff2rs_nomig.Rdata")
+# 
+# 
+# spat_fff3rs_nomig  = splm::spml(formula = fff3rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff3rs_nomig , file = "temporary output/spat_fff3rs_nomig.Rdata")
+# 
+# 
+# spat_fff4rs_nomig  = splm::spml(formula = fff4rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff4rs_nomig , file = "temporary output/spat_fff4rs_nomig.Rdata")
+# 
+# 
+# spat_fff5rs_nomig  = splm::spml(formula = fff5rs_nomig, data =cpall, model = "random", listw =  queenw, lag = FALSE, spatial.error = "b", local = list(parallel = TRUE))
+# save(spat_fff5rs_nomig , file = "temporary output/spat_fff5rs_nomig.Rdata")
 
 }, error = function(e){cat("ERROR :", conditionMessage(e))})
 
@@ -277,23 +277,23 @@ names(bicspatr) = c("fm", "fnom", "fff2", "fff2_nomig", "fff3", "fff3_nomig","ff
 spatchoicer = names(bicspatr[bicspatr== min(bicspatr)])
 
 # models with "stratified" interaction terms for rural 
-bicspatrs = c(fm = BICsplm(spat_fmrs),
-             fnom = BICsplm(spat_fnomrs),
-             fff2 = BICsplm(spat_fff2rs), 
-             fff2_nomig = BICsplm(spat_fff2rs_nomig),
-             fff3 = BICsplm(spat_fff3rs),
-             fff3_nomig = BICsplm(spat_fff3rs_nomig),
-             fff4 = BICsplm(spat_fff4rs),
-             fff4_nomig = BICsplm(spat_fff4rs_nomig),
-             fff5 = BICsplm(spat_fff5rs),
-             fff5_nomig = BICsplm(spat_fff5rs_nomig))
-names(bicspatrs) = c("fm", "fnom", "fff2", "fff2_nomig", "fff3", "fff3_nomig","fff4", "fff4_nomig", "fff5", "fff5_nomig")
-spatchoicers = names(bicspatrs[bicspatrs== min(bicspatrs)])
+# bicspatrs = c(fm = BICsplm(spat_fmrs),
+#              fnom = BICsplm(spat_fnomrs),
+#              fff2 = BICsplm(spat_fff2rs), 
+#              fff2_nomig = BICsplm(spat_fff2rs_nomig),
+#              fff3 = BICsplm(spat_fff3rs),
+#              fff3_nomig = BICsplm(spat_fff3rs_nomig),
+#              fff4 = BICsplm(spat_fff4rs),
+#              fff4_nomig = BICsplm(spat_fff4rs_nomig),
+#              fff5 = BICsplm(spat_fff5rs),
+#              fff5_nomig = BICsplm(spat_fff5rs_nomig))
+# names(bicspatrs) = c("fm", "fnom", "fff2", "fff2_nomig", "fff3", "fff3_nomig","fff4", "fff4_nomig", "fff5", "fff5_nomig")
+# spatchoicers = names(bicspatrs[bicspatrs== min(bicspatrs)])
 
 
 save(bicspat, file = "temporary output/bicspat.Rdata")
 save(bicspatr, file = "temporary output/bicspatr.Rdata")
-save(bicspatrs, file = "temporary output/bicspatrs.Rdata")
+#save(bicspatrs, file = "temporary output/bicspatrs.Rdata")
 
 # i believe that this warning message: In sqrt(diag(object$vcov.errcomp)) : NaNs produced
 # is the result of one year of migterms missing a rate_d0. based on this stackoverflow, it is not a current concern: https://stackoverflow.com/questions/67338560/zeroinfl-model-warning-message-in-sqrtdiagobjectvcov-nans-produced
