@@ -107,7 +107,7 @@ We test the following four hypotheses:
 
 2.  County-to-county migration patterns improve the explainability of spatio-temporal autoregressive models of county-level premature age-adjusted mortality.
 
-3.  The role that intercounty migration plays in county-level premature mortality differs significantly between rural and urban counties.
+3.  County-to-county migration patterns improve the explainability of spatio-temporal autoregressive models of county-level premature age-adjusted mortality, even after accounting for rural-urban differences.
 
 4.  Taking into account health-related bias in migration patterns improves our ability to explain county-level premature mortality as well as the differential role that migration plays in urban versus rural counties.
 
@@ -242,9 +242,9 @@ gt::gt(tablex) |> tab_style(style = list(cell_fill(color = "palegreen3"),
 
 In order to maximize the number of counties per category, we chose to use only two urbanization categorizations: urban and rural, where urban includes large central metro, medium metro, and small metro counties <!--# i verified this using cococino county as a check - these definitions are also outlined and cited in the data section --> and rural includes micropolitan and noncore counties. We assessed `r length(unique(migterm_imp$destid[migterm_imp$rural == 1]))` unique rural counties and `r length(unique(migterm_imp$destid[migterm_imp$rural == 0]))` unique urban counties. Again, we utilized the same steps outlined above to determine which model had the most explanatory power and lowest BIC score. We found that trends in premature mortality rates while accounting for urbanicity could be explained by the same model as the one used previously. Once again, even after accounting for spatial error, the migration term remained important to explaining county-level premature age-adjusted mortality rates even after accounting for urbanicity.
 
-<!--# need to update this table and/or verify that it's doing what i think it's doing -->
+<!--# need to update this table and/or decide no table for this section-->
 
-```{r urban rural mod selection, echo = FALSE, message = FALSE, warning = FALSE}
+```{r urban rural mod selection, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
 #BIC scores were generated in "spatial mod selection.R"  
 load("temporary output/bicspat_rural.Rdata")
 load("temporary output/bicspat_urb.Rdata")
@@ -304,12 +304,17 @@ To determine which values of $d_{ij}$ best explain trends in county-level premat
 
 ```{r}
 load("C:/Users/holsonwillia/Documents/fromchtc/chtctot.RData")
-
-#minimum BIC: 
-#chtctot[chtctot$bicspat == min(chtctot$bicspat, na.rm=TRUE),]
+load("C:/Users/holsonwillia/Documents/fromchtc/chtctot25.RData")
 
 
-bicmin = chtctot %>% filter(kuu == 0 & krr == 0)
+
+chall = rbind(chtctot, chtctot25)
+
+#minimum BIC 
+#chall[chall$bicspat == min(as.numeric(chall$bicspat), na.rm=TRUE),]
+
+
+bicmin = chall %>% filter(kuu == 0 & krr == 0)
 #lattice::wireframe(bicspat ~ as.numeric(kru) * as.numeric(kur) , data = bicmin)
 ggplot(aes(x = as.numeric(kur), y = as.numeric(bicspat)), data = bicmin) + 
   geom_point() + 
@@ -336,9 +341,9 @@ To justify further investigation, first we determined that our migration term ad
 
 For a more robust comparison, we then accounted for spatial error. Again, we found that the best fitting model in terms of BIC score included splines with four degrees of freedom for both the autoregressive term and our weighted average migration term. Additionally, we determined that models that accounted for both spatial error and migration had lower BIC scores than models that did not account for spatial error or did not include our migration term. **This confirms Hypothesis 2.**
 
-Then, to quantify potential rural-urban differences in the role of intercounty migration on county-level health, we used spatial error models to assess the effect of migration on premature age-adjusted mortality separately for rural and urban counties. We found that for both urban and rural counties, the models with the lowest BIC scores included splines with four degrees of freedom each for the migration term and lagged age-adjusted mortality as well as the net migration term factor variable. Therefore, **we cannot form strong conclusions about Hypothesis 3**: the role that intercounty migration plays in county-level premature mortality does not appear to differ significantly between rural and urban counties.
+Then, to quantify potential rural-urban differences in the role of intercounty migration on county-level health, we used spatial error models to assess the effect of migration on premature age-adjusted mortality with an interaction term for urbanicity. We found that after adjusting for urbanicity, the models with the lowest BIC scores included splines with four degrees of freedom each for the migration term and lagged age-adjusted mortality as well as the net migration term factor variable. Thus, even after accounting for urbanicity, the migration term added explainability to our models.
 
-Finally, we simulated health-related selection for migration using $k_i$ and $k_j$ and concluded that, based on our models, migrants who are healthier on average appear to be selected for migration to rural counties while migrants do not appear to be selected to urban counties. Therefore, we have **partially confirmed Hypothesis 4**: health-related selection for migration improves our ability to explain county-level premature mortality in rural counties but not in urban counties.
+Finally, we simulated health-related selection for migration using $d_{ij}$, the difference on average of health in a destination county and health in an origin county, and concluded that, based on our models, trends in model explainability are primarily driven by rural-urban migration, with people leaving rural counties to go to urban destinations being slightly less healthy on average than the health of their rural origins on average. Therefore, we have **partially confirmed Hypothesis 4**: health-related selection for migration improves our ability to explain county-level premature mortality to urban counties from rural counties, but we cannot form strong conclusions about health-related selection to rural destinations.
 
 <!--# need to confirm no interactions between netmig, migterm, and autoreg -->
 
@@ -356,7 +361,9 @@ We cannot fully understand county-level health without first understanding count
 
 <!--# code for visuals not currently in use -->
 
-```{r urb rural comparison plot, include = FALSE, echo = FALSE, warning = FALSE}
+## scratch
+
+```{r urb rural comparison plot, include = FALSE, echo = FALSE, warning = FALSE, include = FALSE}
 # not sure how to visualize this……… the plot below does not seem effective 
 
 # # add geography for use on spatial stuff
@@ -553,8 +560,6 @@ add bic table where the kjs are constant for overall, not just rural/urb
 make tables have a reference BIC and then change against reference instead of just raw BIC make tables wider whenever possible. make BIC with no mig and 1 df the reference value
 
 for the line plot, make ki = 0 the reference value and then make the y axis the relative change. maybe need to have two y axes
-
-##scratch
 
 , with the best fitting model for rural counties highlighted in blue, the best fitting model for urban counties highlighted in red, and the best model for rural and urban counties combined highlighted in green.
 
